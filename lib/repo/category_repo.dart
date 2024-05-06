@@ -14,10 +14,13 @@ class SqlCategoryRepo
   @override
   Future<Category?> create(CategoryParams params) async {
     final map = params.toJson();
+    final mapkey = map.keys.map((e) {
+      return " ${e.toString()}";
+    });
     map.addEntries({MapEntry("created_At", DateTime.now().toIso8601String())});
-    final result = await database
-        .rawInsert("""insert into $tableName (${map.keys.join(",")}) 
-        values (${map.values.map((e) => "$e").join(",")}) ;""");
+    final result = await database.rawInsert(
+        """insert into "$tableName" \(${map.keys.map((e) => "${e.toString()}").join(",")})
+        values (${map.values.map((e) => '$e').join(",")}) """);
     print("result $result");
     return null;
 
