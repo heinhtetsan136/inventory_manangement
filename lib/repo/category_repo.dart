@@ -12,17 +12,19 @@ class SqlCategoryRepo
   final String tableName;
   SqlCategoryRepo(this.store) : tableName = categoriesTb;
   @override
-  Future<Category?> create(CategoryParams params) async {
-    final map = params.toJson();
-    final mapkey = map.keys.map((e) {
+  Future<Category?> create(CategoryParams values) async {
+    final payload = values.tocreate();
+    final mapkey = payload.keys.map((e) {
       return " ${e.toString()}";
     });
-    map.addEntries({MapEntry("created_At", DateTime.now().toIso8601String())});
-    final result = await database.rawInsert(
-        """insert into "$tableName" \(${map.keys.map((e) => "${e.toString()}").join(",")})
-        values (${map.values.map((e) => '$e').join(",")}) """);
-    print("result $result");
-    return null;
+    payload.addEntries({MapEntry("created_At", DateTime.now())});
+
+    final insertedId = await database
+        .rawInsert('''insert into "$tableName" (${payload.keys.join(",")}) 
+        values (${payload.values.map((e) => "'$e'").join(",")})''');
+    // final result = await database.insert(tableName, map);
+    print("result $insertedId");
+    return get(insertedId);
 
     // if (result.isEmpty) return null;
     // return Category.fromJson(result.first);
@@ -34,11 +36,39 @@ class SqlCategoryRepo
   }
 
   @override
-  Future<Category?> update() {
-    throw UnimplementedError();
+  Future<Category?> update(int id, CategoryParams values) async {
+    final payload = values.toUpdate();
+
+    payload.addEntries({MapEntry("created_At", DateTime.now())});
+    final dataset = payload.keys.map((column) {
+      return "$column ='${payload[column]}'";
+    }).join(",");
+    final updatedId = await database
+        .rawInsert('''update "$tableName" set $dataset where id = $id 
+        ''');
+    // final result = await database.insert(tableName, map);
+    print("result $updatedId");
+    return get(updatedId);
   }
 
   @override
   // TODO: implement database
   Database get database => store.database!;
+
+  @override
+  Future<Category?> get(int id) async {
+    final result = await database
+        .rawQuery("""select * from "$tableName" where id=$id limit 1""");
+    print("get $result");
+    return Category.fromJson(result.first);
+  }
+
+  @override
+  Future<List<Category>?> find([int? limit = 1, int? offset = 0]) async {
+    final result = await database
+        .rawQuery("""select * from $tableName limit $offset,$limit """);
+    return result.map((e) {
+      return Category.fromJson(e);
+    }).toList();
+  }
 }

@@ -14,12 +14,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final sqldatabase =
-        SqlliteDatabase.newInstance(DateTime.now().toIso8601String());
+    final sqldatabase = SqlliteDatabase.newInstance("sdfwdw");
     final SqlCategoryRepo sqlProductRepo = SqlCategoryRepo(sqldatabase);
     sqldatabase.connect().then((value) async {
-      final product = await sqlProductRepo.create(CategoryParams(name: "sf"));
-      print("product $product");
+      final product =
+          await sqlProductRepo.create(CategoryParams.create(name: "w"));
+      final re = await sqlProductRepo.find(3);
+      // final product =
+      //     await sqlProductRepo.update(1, CategoryParams.update(name: "mg mg"));
+      final re1 = await sqlProductRepo.find(3);
+      // final re = await sqlProductRepo.find();
+      print("product $re $re1");
     });
 
     return MaterialApp(

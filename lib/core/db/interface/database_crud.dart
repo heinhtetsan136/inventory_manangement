@@ -6,7 +6,9 @@ abstract class DatabaseCrud<D, M, MP extends DatabaseModel> {
   D get database => store.database!;
   final String tableName;
   DatabaseCrud({required this.tableName, required this.store});
+  Future<List<M>?> find([int? limit = 0, int? offset = 0]);
+  Future<M?> get(int id);
   Future<M?> create(MP value);
-  Future<M?> update();
+  Future<M?> update(int id, MP value);
   Future<M?> delete();
 }
