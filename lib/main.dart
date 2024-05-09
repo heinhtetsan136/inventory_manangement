@@ -38,7 +38,9 @@ class MyApp extends StatelessWidget {
       // final reproductw =
       //     await sqlProductRepo.findModel(useRef: false, limit: 1);
       // final reproduct = await sqlProductRepo.findModel(useRef: true, limit: 1);
-      final category = await sqlcategoryRepo.findModel(useRef: true, limit: 1);
+      final category = await sqlcategoryRepo.findModel(
+        useRef: true,
+      );
 
       logger.i("find category $category");
       // // print("find $reproductw");

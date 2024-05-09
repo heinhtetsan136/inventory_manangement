@@ -13,7 +13,9 @@ class SqliteCategoryRepo extends sqliteRepo<Categories, CategoryParams> {
   String get refQuery {
     return '''
    select "$tableName".*,
-      (select count("$productTb"."id") from "$productTb" where "$productTb"."category_id"="$tableName"."id") as product_count 
+      (select count("$productTb"."id") 
+      from "$productTb" where "$productTb"."category_id"="$tableName"."id") 
+      as product_count 
       from "$tableName"
 
 ''';

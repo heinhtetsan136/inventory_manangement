@@ -7,15 +7,18 @@ class Categories extends DatabaseModel {
   final String name;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final int? product_count;
 
   Categories(
       {required this.id,
+      required this.product_count,
       required this.name,
       required this.createdAt,
       required this.updatedAt});
   factory Categories.fromJson(dynamic data) {
     print("crated At c ${DateTime.parse(data["created_At"])}");
     return Categories(
+        product_count: int.tryParse(data["product_count"].toString() ?? ""),
         id: int.parse(data["id"].toString()),
         name: data["name"],
         createdAt: DateTime.parse(data["created_At"]),
@@ -29,6 +32,7 @@ class Categories extends DatabaseModel {
       "name": name,
       "created_At": createdAt.toIso8601String(),
       "updated_At": updatedAt?.toIso8601String(),
+      "product_count": product_count
     };
   }
 
