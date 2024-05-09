@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
 
@@ -55,6 +57,11 @@ class Product extends DatabaseModel {
       "created_At": created_At.toIso8601String(),
       "updated_At": updated_At?.toIso8601String(),
     };
+  }
+
+  @override
+  String toString() {
+    return json.encode(toJson());
   }
 }
 

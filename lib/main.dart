@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
 import 'package:inventory_management_app/core/impl/sqlite_repo.dart';
 import 'package:inventory_management_app/home_screen.dart';
+import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
 import 'package:inventory_management_app/repo/product_repo/product_repo.dart';
 
@@ -36,11 +37,12 @@ class MyApp extends StatelessWidget {
       //     DateTime.now().toIso8601String()));
       // final reproductw =
       //     await sqlProductRepo.findModel(useRef: false, limit: 1);
-      final reproduct = await sqlProductRepo.findModel(useRef: true, limit: 1);
-      // final category = await sqlcategoryRepo.findModel();
-      // print("find category $category");
-      // print("find $reproductw");
-      print("find $reproduct");
+      // final reproduct = await sqlProductRepo.findModel(useRef: true, limit: 1);
+      final category = await sqlcategoryRepo.findModel(useRef: true, limit: 1);
+
+      logger.i("find category $category");
+      // // print("find $reproductw");
+      // print("find $reproduct");
     });
 
     return MaterialApp(

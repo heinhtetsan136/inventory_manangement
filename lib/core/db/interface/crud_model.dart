@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 abstract class DatabaseParamModel {
   const DatabaseParamModel();
   Map<String, dynamic> tocreate();
@@ -8,9 +6,4 @@ abstract class DatabaseParamModel {
 
 abstract class DatabaseModel {
   const DatabaseModel();
-  Map<String, dynamic> toJson();
-  @override
-  String toString() {
-    return jsonEncode(toJson());
-  }
 }
