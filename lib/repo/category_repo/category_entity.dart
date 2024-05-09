@@ -1,20 +1,18 @@
-import 'dart:convert';
-
 import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 
-class Category {
+class Categories extends DatabaseModel {
   final int id;
   final String name;
   final DateTime createdAt;
   final DateTime? updatedAt;
 
-  Category(
+  Categories(
       {required this.id,
       required this.name,
       required this.createdAt,
       required this.updatedAt});
-  factory Category.fromJson(dynamic data) {
-    return Category(
+  factory Categories.fromJson(dynamic data) {
+    return Categories(
         id: int.parse(data["id"].toString()),
         name: data["name"],
         createdAt: DateTime.parse(data["created_At"]),
@@ -30,14 +28,9 @@ class Category {
       "updated_At": updatedAt?.toIso8601String(),
     };
   }
-
-  @override
-  String toString() {
-    return json.encode(toJson());
-  }
 }
 
-class CategoryParams implements DatabaseModel {
+class CategoryParams implements DatabaseParamModel {
   final String name;
 
   CategoryParams._({required this.name});

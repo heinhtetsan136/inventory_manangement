@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
+import 'package:inventory_management_app/core/impl/sqlite_repo.dart';
 import 'package:inventory_management_app/home_screen.dart';
-import 'package:inventory_management_app/repo/category_entity.dart';
-import 'package:inventory_management_app/repo/category_repo.dart';
+import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
+import 'package:inventory_management_app/repo/product_repo/product_entity.dart';
+import 'package:inventory_management_app/repo/product_repo/product_repo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,17 +16,31 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final sqldatabase = SqlliteDatabase.newInstance("sdfwdw");
-    final SqlCategoryRepo sqlProductRepo = SqlCategoryRepo(sqldatabase);
+    final sqldatabase = SqlliteDatabase.newInstance("abcdefg");
+    final sqliteRepo sqlcategoryRepo = SqliteCategoryRepo(
+      sqldatabase,
+    );
+    final SqlProductRepo sqlProductRepo = SqlProductRepo(sqldatabase);
     sqldatabase.connect().then((value) async {
-      final product =
-          await sqlProductRepo.create(CategoryParams.create(name: "w"));
-      final re = await sqlProductRepo.find(3);
+      // final category =
+      //     await sqlcategoryRepo.create(CategoryParams.create(name: "shoes"));
+      final re = await sqlcategoryRepo.findModel(useRef: true);
+      // await sqlProductRepo.delete(4);
       // final product =
       //     await sqlProductRepo.update(1, CategoryParams.update(name: "mg mg"));
-      final re1 = await sqlProductRepo.find(3);
+
       // final re = await sqlProductRepo.find();
-      print("product $re $re1");
+      print("category $re");
+      final product = await sqlProductRepo.create(ProductParams.created(
+          "${DateTime.now().toIso8601String()}  name",
+          10,
+          DateTime.now().toIso8601String()));
+      final reproductw =
+          await sqlProductRepo.findModel(useRef: false, limit: 1);
+      final reproduct = await sqlProductRepo.findModel(useRef: true, limit: 1);
+      final category = await sqlcategoryRepo.findModel();
+      print("find $reproductw");
+      print("find $reproduct");
     });
 
     return MaterialApp(
