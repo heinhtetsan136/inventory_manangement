@@ -19,15 +19,29 @@ class Product extends DatabaseModel {
       required this.created_At,
       required this.updated_At});
   factory Product.fromJson(dynamic data) {
+    print(
+        "crated ${data['category_created_at'] != null} ${data['category_created_at']} ${data['category_name']}");
+    Map<String, dynamic>? categoryPayload;
+    final categoryId = int.parse(data['category_id'].toString());
+    if (data['category_created_at'] != null) {
+      categoryPayload = {};
+      categoryPayload['id'] = categoryId;
+      categoryPayload['name'] = data['category_name'];
+      categoryPayload['created_At'] = data['category_created_at'];
+      categoryPayload['updated_At'] = data['category_updated_at'];
+    }
+    print("cp $categoryPayload");
     return Product(
         name: data["name"],
         id: int.parse(data["id"].toString()),
         category_id: int.parse(data["category_id"].toString()),
-        category: data["category"] == null
+        category: categoryPayload == null
             ? null
-            : Categories.fromJson(data["category"]),
+            : Categories.fromJson(
+                categoryPayload,
+              ),
         barcode: data["barcode"],
-        created_At: DateTime.parse(data["created_At"]),
+        created_At: DateTime.parse(data["created_At"].toString()),
         updated_At: DateTime.tryParse(data["updated_At"] ?? ""));
   }
   @override

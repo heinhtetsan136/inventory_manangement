@@ -11,12 +11,10 @@ class SqlProductRepo extends sqliteRepo<Product, ProductParams> {
   // TODO: implement refQuery
   String get refQuery {
     return '''
-      select "$tableName".*,
-      "$categoriesTb".name as categories_name,
-      "$categoriesTb".created_At as categories_created_At
-
-       from "$tableName"  join  "$categoriesTb" on 
-       "$categoriesTb"."id" = "$tableName"."category_id" 
+        select "$tableName".*,"$categoriesTb".name as category_name,
+        "$categoriesTb"."created_at" as category_created_at,"$categoriesTb"."updated_at" as category_updated_at
+        from "$tableName" 
+        join "$categoriesTb" on "$categoriesTb"."id"="$tableName"."category_id" 
     ''';
   }
 }
