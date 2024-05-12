@@ -103,12 +103,12 @@ class ProductParams extends DatabaseParamModel {
     if (barcode.isNotEmpty == true) {
       payload["barcode"] = barcode;
     }
-
+    assert(payload.isNotEmpty);
     return payload;
   }
 
   @override
-  Map<String, dynamic> tocreate() {
+  Map<String, dynamic> toCreate() {
     return {
       "category_id": category_id,
       "name": name,

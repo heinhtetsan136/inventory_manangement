@@ -15,7 +15,7 @@ class sqliteRepo<Model extends DatabaseModel,
 
   @override
   Future<Model?> create(ModelParams values) async {
-    final payload = values.tocreate();
+    final payload = values.toCreate();
     final mapkey = payload.keys.map((e) {
       return " ${e.toString()}";
     });
@@ -56,7 +56,7 @@ class sqliteRepo<Model extends DatabaseModel,
     // final result = await database.insert(tableName, map);
     if (effectedrow < 1) return null;
     print("result $effectedrow");
-    return get(effectedrow);
+    return get(id);
   }
 
   @override
@@ -65,7 +65,8 @@ class sqliteRepo<Model extends DatabaseModel,
 
   @override
   Future<Model?> get(int id) async {
-    final result = await database.rawQuery("""$query where id=$id limit 1""");
+    final result = await database
+        .rawQuery(""" select * from "$tableName" where id=$id limit 1;""");
     print("get $result");
 
     return parser(result.first);
@@ -92,12 +93,17 @@ class sqliteRepo<Model extends DatabaseModel,
     bool useRef = false,
   }) {
     this.useRef = useRef;
-    return _find(limit, offset, where);
+    return _completer(_find(limit, offset, where), useRef);
   }
 
   Future<Model?> getOne(int id, [bool useRef = false]) {
     this.useRef = useRef;
-    return get(id);
+    return _completer(get(id), useRef);
+  }
+
+  Future<Result> _completer<Result>(Future<Result> callback, bool useRef) {
+    this.useRef = useRef;
+    return callback.whenComplete(() => this.useRef = false);
   }
 
   @override

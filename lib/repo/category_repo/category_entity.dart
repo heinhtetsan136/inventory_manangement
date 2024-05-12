@@ -61,16 +61,17 @@ class CategoryParams implements DatabaseParamModel {
   }
 
   @override
-  Map<String, dynamic> toUpdate() {
+  Map<String, dynamic> toCreate() {
     return {
       "name": name,
     };
   }
 
   @override
-  Map<String, dynamic> tocreate() {
-    final Map<String, dynamic> data = {};
-    if (name.isNotEmpty) data["name"] = name;
-    return data;
+  Map<String, dynamic> toUpdate() {
+    final Map<String, dynamic> payload = {};
+    if (name.isNotEmpty) payload["name"] = name;
+    assert(payload.isNotEmpty);
+    return payload;
   }
 }
