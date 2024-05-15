@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_management_app/shop/screen/screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management_app/core/bloc/custom_bloc_observer.dart';
+import 'package:inventory_management_app/core/db/const/const.dart';
+import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
+import 'package:inventory_management_app/route/route.dart';
 import 'package:inventory_management_app/theme/theme.dart';
+import 'package:starlight_utils/starlight_utils.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = CustomBlocObserver();
+  final SqlliteDatabase shopDb =
+      SqlliteDatabase.newInstance(shopDbName, shopTableColumn, 1);
+
+  await shopDb.connect();
+  // await shopDb.removeAllSqliteFile();
   runApp(const MyApp());
 }
 
@@ -12,7 +24,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // final sqldatabase = SqlliteDatabase.newInstance("abcdefg");
     // final sqliteRepo sqlcategoryRepo = SqliteCategoryRepo(
     //   sqldatabase,
     // );
@@ -51,6 +62,9 @@ class MyApp extends StatelessWidget {
     // });
     final lighttheme = LightTheme();
     return MaterialApp(
+      navigatorKey: StarlightUtils.navigatorKey,
+      onGenerateRoute: route,
+
       title: 'Flutter Demo',
       theme: lighttheme.theme,
 
@@ -72,7 +86,6 @@ class MyApp extends StatelessWidget {
       //   // tested with just a hot reload.
 
       // ),
-      home: const ShopScreen(),
     );
   }
 }

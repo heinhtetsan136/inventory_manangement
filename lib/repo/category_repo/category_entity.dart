@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 
 class Categories extends DatabaseModel {
-  final int id;
   final String name;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int? product_count;
 
   Categories(
-      {required this.id,
+      {required super.id,
       required this.product_count,
       required this.name,
       required this.createdAt,
@@ -69,9 +68,10 @@ class CategoryParams implements DatabaseParamModel {
 
   @override
   Map<String, dynamic> toUpdate() {
+    assert(name.isNotEmpty);
     final Map<String, dynamic> payload = {};
     if (name.isNotEmpty) payload["name"] = name;
-    assert(payload.isNotEmpty);
+
     return payload;
   }
 }

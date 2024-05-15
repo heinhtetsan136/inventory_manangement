@@ -4,7 +4,6 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
 
 class Product extends DatabaseModel {
-  final int id;
   final String name;
   final int category_id;
   final Categories? category;
@@ -14,7 +13,7 @@ class Product extends DatabaseModel {
 
   Product(
       {required this.name,
-      required this.id,
+      required super.id,
       required this.category_id,
       required this.category,
       required this.barcode,
@@ -93,6 +92,7 @@ class ProductParams extends DatabaseParamModel {
   }
   @override
   Map<String, dynamic> toUpdate() {
+    assert(name.isNotEmpty || category_id > 0 || barcode.isNotEmpty);
     final Map<String, dynamic> payload = {};
     if (name.isNotEmpty == true) {
       payload["name"] = name;
@@ -103,7 +103,7 @@ class ProductParams extends DatabaseParamModel {
     if (barcode.isNotEmpty == true) {
       payload["barcode"] = barcode;
     }
-    assert(payload.isNotEmpty);
+
     return payload;
   }
 

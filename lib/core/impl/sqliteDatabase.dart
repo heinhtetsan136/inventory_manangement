@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:inventory_management_app/core/db/const/const.dart';
 import 'package:inventory_management_app/core/db/database_interface.dart';
 import 'package:inventory_management_app/core/db/interface/table.dart';
 import 'package:inventory_management_app/core/db/utils/table_utils.dart';
@@ -9,54 +8,86 @@ import 'package:sqflite/sqflite.dart';
 
 class SqlliteDatabase extends DataStore<Database> {
   final String dbName;
-  SqlliteDatabase._(this.dbName, [this.version = 1]);
+  final String storePath;
+  final Map<int, Map<String, List<TableProperties>>> tableColumns;
+
+  SqlliteDatabase._(this.dbName, this.tableColumns, [this.version = 1])
+      : storePath = "/sqlite";
 
   @override
   Database? database;
   final int version;
+  Directory? doc;
   static final Map<String, SqlliteDatabase?> _instance = {};
-  static SqlliteDatabase newInstance(String dbName, [int version = 1]) {
-    _instance[dbName] ??= SqlliteDatabase._(dbName, version);
+  static SqlliteDatabase newInstance(
+      String dbName, Map<int, Map<String, List<TableProperties>>> tableColumns,
+      [int version = 1]) {
+    _instance[dbName] ??= SqlliteDatabase._(dbName, tableColumns, version);
+    return _instance[dbName]!;
+  }
+
+  static SqlliteDatabase getInstance(String dbName) {
     return _instance[dbName]!;
   }
 
   @override
-  Future<void> OnDown([Database? db]) async {
-    if (db == null) {
-      assert(database != null);
-    }
+  Future<void> OnUp(
+    int version, [
+    Database? db,
+  ]) async {
+    assert(db != null || database != null);
 
-    // TODO: implement OnDown
-    await Future.wait(tableNames.reversed.map((table) {
-      return (db ?? database)!.execute("""
-drop table if exists
-      "$table"  
-      """);
+    final columnMigration = tableColumns[version];
+    if (columnMigration == null) throw "version not found";
+
+    await Future.wait(columnMigration.keys.map((tableName) {
+      String query = """Create table if not exists "$tableName" (
+        id integer primary key autoincrement,
+        created_at text not null,  
+        updated_at text,
+      """;
+
+      ///other column
+      for (TableProperties column in columnMigration[tableName] ?? []) {
+        query += toSqlQuery(column);
+      }
+
+      /// Create table if not exists $tableName (
+      ///  id integer primary key autoincrement,
+      ///  created_at text not null,
+      ///  updated_at text,
+      ///  name varchar(255) not null,
+      ///  length > index  > 1
+      ///  2
+      query = query.replaceFirst(",", "", query.length - 2);
+
+      /// Create table if not exists $tableName (
+      ///  id integer primary key autoincrement,
+      ///  created_at text not null,
+      ///  updated_at text,
+      ///  name varchar(255) not null
+
+      query += ");";
+      return (db ?? database)!.execute(query);
     }));
-    print("Object delete");
   }
 
   @override
-  Future<void> OnUp([Database? db]) async {
-    if (db == null) {
-      assert(database != null);
+  Future<void> OnDown(int old, current, [Database? db]) async {
+    assert(db != null || database != null);
+    final currentMigration = tableColumns[current];
+    if (currentMigration == null) throw "version now found";
+    final oldColumnMigration = tableColumns[old];
+    if (oldColumnMigration == null) {
+      throw "version not found";
     }
-
-    await Future.wait(tableNames.map((tableNames) {
-      String query = '''Create table if not exists "$tableNames" (
-        id integer primary key autoincrement,
-        created_At text not null,
-        updated_At text,
-        ''';
-      for (TableProperties columns in tableColumn[tableNames] ?? []) {
-        query += toSqlQuery(columns);
-      }
-      query = query.replaceFirst(",", "", query.length - 2);
-      query += ");";
-      print("query is $query");
-      return (db ?? database)!.execute(query);
+    await Future.wait(currentMigration.keys.toList().reversed.map((e) {
+      return (db ?? database)!.execute("""
+        drop table if exists "$e"; 
+      """);
     }));
-    print("Object created");
+
+    // await onUp(current, db);
   }
 
   @override
@@ -70,23 +101,49 @@ drop table if exists
 
   @override
   Future<void> connect() async {
+    print(database != null);
     if (database != null) return;
-    final Directory doc = await getApplicationCacheDirectory();
-    final File dbFile = File("${doc.path}/$dbName");
+    await checkStorePath();
+    final File dbFile = File("${doc!.path}/$dbName");
     if (!(await dbFile.exists())) {
+      print("object");
       dbFile.create();
     }
     database = await openDatabase(
       dbFile.path,
       version: version,
-      onCreate: (db, __) async {
-        await OnUp(db);
+      onCreate: (db, version) async {
+        await OnUp(version, db);
         print("reach");
       },
-      onDowngrade: (db, __, ___) async {
-        await OnDown(db);
+      onDowngrade: (db, old, current) async {
+        await OnDown(old, current, db);
       },
     );
     print("database $database");
+  }
+
+  Future<void> checkStorePath() async {
+    if (doc == null) {
+      doc = await getApplicationDocumentsDirectory();
+      doc = Directory(doc!.path + storePath);
+      if (await doc!.exists()) return;
+
+      await doc!.create();
+    }
+  }
+
+  Future<void> removeAllSqliteFile() async {
+    if (doc == null) {
+      await checkStorePath();
+    }
+
+    await doc!.list().forEach((fs) async {
+      final sta = await fs.stat();
+      if (sta.type == FileSystemEntityType.file) {
+        print("sqlfile ${fs.path} ${fs.toString()} deleted");
+        await fs.delete();
+      }
+    });
   }
 }

@@ -1,6 +1,12 @@
 abstract class TableProperties {}
 
 class TableForeignKey implements TableProperties {
+  @override
+  String toString() {
+    // TODO: implement toString
+    return fColumn.toString() + table.toString();
+  }
+
   final String fColumn;
   final String table;
 
