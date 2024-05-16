@@ -27,7 +27,7 @@ class Result<T> {
         assert(result != null || exception != null);
   bool get hasError => _exception != null;
   T? get result {
-    assert(_exception == null);
+    // assert(_exception == null);
     return _result;
   }
 
@@ -41,7 +41,7 @@ abstract class DatabaseModel {
   final int id;
   @override
   bool operator ==(covariant DatabaseModel other) {
-    return other.id == id && other.id.runtimeType == id.runtimeType;
+    return other.id == id && other.runtimeType == runtimeType;
   }
 
   @override

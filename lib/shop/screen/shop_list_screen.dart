@@ -86,7 +86,7 @@ class ShopList extends StatelessWidget {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text("Shop_name $i"),
+                        Text("Shop_name ${state.list.map((e) => e.name)}"),
                       ],
                     ),
                   ),

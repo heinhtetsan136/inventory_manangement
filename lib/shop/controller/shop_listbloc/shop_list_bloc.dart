@@ -61,7 +61,7 @@ class ShopListBloc extends Bloc<ShopListEvent, ShopListState> {
     if (state is ShopListLoadingState || state is ShopListSoftLoadingState) {
       return;
     }
-    final list = state.list;
+    final list = state.list.toList();
     if (list.isEmpty) {
       emit(ShopListLoadingState(list));
     } else {
@@ -73,14 +73,14 @@ class ShopListBloc extends Bloc<ShopListEvent, ShopListState> {
     if (result.hasError) {
       emit(ShopListErrorState(list, result.exception!.message));
     }
-    final List<Shop> incominglist = result.result ?? [];
+    final incominglist = result.result ?? [];
     if (incominglist.isEmpty) {
       emit(ShopListReceiveState(list));
       return;
     }
 
     currentoffset += incominglist.length;
-
+    logger.i(incominglist);
     list.addAll(incominglist);
 
     emit(ShopListReceiveState(state.list.toList()));

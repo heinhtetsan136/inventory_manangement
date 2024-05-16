@@ -1,6 +1,6 @@
 import 'package:inventory_management_app/core/db/interface/table.dart';
 
-const String shopDbName = "shop_db";
+const String shopDbName = "shopdb";
 const String categoriesTb = "categories",
     productTb = "products",
     optionsTb = "options",

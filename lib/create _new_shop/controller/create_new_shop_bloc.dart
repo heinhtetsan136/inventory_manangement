@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_event.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
+import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_repo.dart';
 
@@ -19,7 +20,8 @@ class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
   }
 
   FutureOr<void> _createNewShopCreateShopEvent(event, emit) async {
-    if (state.coverPhotoPath != null || state is! CreateNewShopCreatingState) {
+    logger.i(event);
+    if (state.coverPhotoPath == null || state is CreateNewShopCreatingState) {
       return;
     }
     emit(CreateNewShopCreatingState(coverPhotoPath: state.coverPhotoPath));

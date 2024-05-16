@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_bloc.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_event.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
+import 'package:inventory_management_app/logger/logger.dart';
 import 'package:starlight_utils/starlight_utils.dart';
 
 class CreateNewShopScreen extends StatelessWidget {
@@ -13,6 +14,7 @@ class CreateNewShopScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final createNewShopbloc = context.read<CreateNewShopBloc>();
     final middleWidth = context.width * 0.14;
     return Scaffold(
       body: SafeArea(
@@ -44,6 +46,7 @@ class CreateNewShopScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: TextFormField(
+                controller: createNewShopbloc.controller,
                 decoration: const InputDecoration(hintText: "Shop Name"),
               ),
             ),
@@ -66,12 +69,26 @@ class CreateNewShopSubmitButton extends StatelessWidget {
     final createNewShopbloc = context.read<CreateNewShopBloc>();
     return ElevatedButton.icon(
       label: BlocConsumer<CreateNewShopBloc, CreateNewShopState>(
-          listener: (context, state) {
+          listenWhen: (p, c) {
+        return c is CreateNewShopCreatedState;
+      }, listener: (context, state) {
+        if (state is CreateNewShopCreatedState) {
+          StarlightUtils.pop();
+          StarlightUtils.dialog(SnackBar(
+              content:
+                  Text("${createNewShopbloc.controller.text} was created")));
+          return;
+        }
         if (state is CreateNewShopErrorState) {
           StarlightUtils.dialog(
               const SnackBar(content: Text("Please choose a picture")));
         }
+      }, buildWhen: (p, c) {
+        return c is CreateNewShopCreatedState ||
+            c is CreateNewShopCreatingState ||
+            c is CreateNewShopErrorState;
       }, builder: (_, state) {
+        logger.i("state is $state");
         if (state is CreateNewShopCreatingState) {
           return const CupertinoActivityIndicator();
         } else {
@@ -97,8 +114,11 @@ class ShopCoverPhotoPicker extends StatelessWidget {
             .read<CreateNewShopBloc>()
             .add(const CreateNewShopPickCoverPhotoEvent());
       },
-      child: BlocBuilder<CreateNewShopBloc, CreateNewShopState>(
-          builder: (_, state) {
+      child:
+          BlocBuilder<CreateNewShopBloc, CreateNewShopState>(buildWhen: (p, c) {
+        return p.coverPhotoPath?.split("/").last !=
+            c.coverPhotoPath?.split("/").last;
+      }, builder: (_, state) {
         final path = state.coverPhotoPath ?? "";
         return CircleAvatar(
           radius: 80,
