@@ -24,49 +24,55 @@ abstract class _ContainerKey {
   int get hashCode => key.hashCode;
 }
 
-class _PublicContainerKey extends _ContainerKey {
-  _PublicContainerKey(super.key);
-  factory _PublicContainerKey.fromType(Type t) {
-    return _PublicContainerKey(t.toString());
+class _ValueKey extends _ContainerKey {
+  _ValueKey(super.key);
+  factory _ValueKey.fromType(Type t) {
+    return _ValueKey(t.toString());
   }
 }
 
-class _PrivateContainerKey extends _ContainerKey {
-  _PrivateContainerKey(String key) : super("_$key");
-  factory _PrivateContainerKey.fromType(Type t) {
-    return _PrivateContainerKey(t.toString());
+class _LazyValueKey extends _ContainerKey {
+  _LazyValueKey(String key) : super("_$key");
+  factory _LazyValueKey.fromType(Type t) {
+    return _LazyValueKey(t.toString());
   }
 }
 
 class Container {
-  (bool, _PublicContainerKey, _PrivateContainerKey) _alreadyInject(String key) {
+  (bool, _ValueKey, _LazyValueKey) _alreadyInject(String key) {
     assert(!key.startsWith("_"));
-    final publickey = _PublicContainerKey(key);
-    final privatekey = _PrivateContainerKey("_key");
+    final valuekey = _ValueKey(key);
+    final lazyvaluekey = _LazyValueKey("_key");
 
     return (
-      store[privatekey] != null || store[publickey] != null,
-      publickey,
-      privatekey
+      store[lazyvaluekey] != null || store[valuekey] != null,
+      valuekey,
+      lazyvaluekey
     );
   }
 
   final Map<_ContainerKey, _ContainerValue> store = {};
-  bool set<T>(String key, T value) {
-    final inject = _alreadyInject(key);
+  bool set<T>(
+    T value, [
+    String? instanceName,
+  ]) {
+    final inject = _alreadyInject(instanceName ?? T.toString());
     print(value);
     if (inject.$1) return false;
     store[inject.$2] = _ContainerValue(value);
     return true;
   }
 
-  void setSingleTone<T>(T value) {
-    store[_PublicContainerKey.fromType(value.runtimeType)] =
-        _ContainerValue(value);
+  bool setSingleTone<T>(T value) {
+    final (inject, publickey, _) = _alreadyInject(value.toString());
+
+    if (inject) return false;
+    store[publickey] = _ContainerValue(value);
+    return true;
   }
 
   T _checkValue<T>(_ContainerKey key, _ContainerValue container) {
-    if (container.value is Function && key is _PrivateContainerKey) {
+    if (container.value is Future && key is _LazyValueKey) {
       final result = container.value();
       store[key] = _ContainerValue(result);
       return result;
@@ -74,34 +80,76 @@ class Container {
     return container.value;
   }
 
-  T _getContainer<T>(
-      _PublicContainerKey publicKey, _PrivateContainerKey privateKey) {
-    final publicvalue = store[publicKey];
-    final privatevalue = store[privateKey];
-    if (publicvalue == null && privatevalue == null) throw "Not found";
-    if (publicvalue != null) return _checkValue(publicKey, publicvalue);
-
-    return _checkValue(privateKey, privatevalue!);
+  Future<T> _checkFutureValue<T>(
+      _ContainerKey key, _ContainerValue container) async {
+    if (container.value is Future && key is _LazyValueKey) {
+      final result = await container.value();
+      store[key] = _ContainerValue(result);
+      return result;
+    }
+    return container.value;
   }
 
-  T get<T>([String? key]) {
+  T _getContainer<T>(_ValueKey valueKey, _LazyValueKey lazyvaluekey) {
+    final value = store[valueKey];
+    final lazyvalue = store[lazyvaluekey];
+    if (value == null && lazyvalue == null) throw "Not found";
+    if (value != null) return _checkValue(valueKey, value);
+
+    return _checkValue(lazyvaluekey, lazyvalue!);
+  }
+
+  Future<T> _getFutureContainer<T>(
+      _ValueKey valueKey, _LazyValueKey lazyvaluekey) async {
+    final value = store[valueKey];
+    final lazyvalue = store[lazyvaluekey];
+    if (value == null && lazyvalue == null) throw "Not found";
+    if (value != null) return _checkValue(valueKey, value);
+
+    return _checkFutureValue(lazyvaluekey, lazyvalue!);
+  }
+
+  T get<T>([String? instanceName]) {
     print(T.toString());
-    if (key == null && T.toString() == "dynamic") {
+    if (instanceName == null && T.toString() == "dynamic") {
       throw "Please provide a key or type";
     }
 
-    if (key == null) {
-      return _getContainer<T>(
-          _PublicContainerKey.fromType(T), _PrivateContainerKey.fromType(T));
+    if (instanceName == null) {
+      return _getContainer<T>(_ValueKey.fromType(T), _LazyValueKey.fromType(T));
     }
-    final inject = _alreadyInject(key);
+    final inject = _alreadyInject(instanceName);
     if (!inject.$1) throw "throw does not exits";
 
     return _getContainer(inject.$2, inject.$3);
   }
 
-  bool lazyset<T>(String key, T Function() value) {
-    final inject = _alreadyInject(key);
+  Future<T> getFuture<T>([String? instanceName]) {
+    print(T.toString());
+    if (instanceName == null && T.toString() == "dynamic") {
+      throw "Please provide a key or type";
+    }
+
+    if (instanceName == null) {
+      return _getFutureContainer<T>(
+          _ValueKey.fromType(T), _LazyValueKey.fromType(T));
+    }
+    final inject = _alreadyInject(instanceName);
+    if (!inject.$1) throw "throw does not exits";
+
+    return _getContainer(inject.$2, inject.$3);
+  }
+
+  bool setLazy<T>(T Function() value, [String? key]) {
+    final inject = _alreadyInject(key ?? T.toString());
+    print(value);
+    if (inject.$1) return false;
+    store[inject.$3] = _ContainerValue(value);
+    return true;
+  }
+
+  bool setFutureLazy<T>(Future<T> Function() value, [String? key]) {
+    final inject = _alreadyInject(key ?? T.toString());
     print(value);
     if (inject.$1) return false;
     store[inject.$3] = _ContainerValue(value);
@@ -114,7 +162,7 @@ void main() {
   c.setSingleTone(1);
 
   c.set("h2", "hello world");
-  c.lazyset("h1", () async {
+  c.setLazy(() async {
     return "future";
   });
   print(c.get("h1"));
