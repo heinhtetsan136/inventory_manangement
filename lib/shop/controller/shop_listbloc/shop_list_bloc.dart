@@ -5,7 +5,7 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/core/db/interface/database_crud.dart';
 import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
-import 'package:inventory_management_app/repo/shop_repo/shop_repo.dart';
+import 'package:inventory_management_app/repo/shop_repo/sqlshop_repo.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_event.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_state.dart';
 

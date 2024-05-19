@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 
 class SqlProductRepo extends sqliteRepo<Product, ProductParams> {
   SqlProductRepo(DataStore<Database> store)
-      : super(store, Product.fromJson, productTb);
+      : super.SqliteRepo(store, Product.fromJson, productTb);
   @override
   // TODO: implement refQuery
   String get refQuery {

@@ -13,7 +13,7 @@ class sqliteRepo<Model extends DatabaseModel,
   @override
   final String tableName;
   final Model Function(dynamic data) parser;
-  sqliteRepo(this.store, this.parser, this.tableName);
+  sqliteRepo.SqliteRepo(this.store, this.parser, this.tableName);
   final StreamController<DatabaseCrudOnchange> _streamController =
       StreamController.broadcast();
 

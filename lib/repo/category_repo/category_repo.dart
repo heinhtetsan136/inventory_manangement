@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 class SqliteCategoryRepo extends sqliteRepo<Categories, CategoryParams> {
   SqliteCategoryRepo(
     DataStore<Database> store,
-  ) : super(store, Categories.fromJson, categoriesTb);
+  ) : super.SqliteRepo(store, Categories.fromJson, categoriesTb);
   @override
   // TODO: implement refQuery
   String get refQuery {

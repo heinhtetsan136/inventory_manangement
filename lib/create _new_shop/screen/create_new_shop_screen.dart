@@ -18,43 +18,53 @@ class CreateNewShopScreen extends StatelessWidget {
     final middleWidth = context.width * 0.14;
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        StarlightUtils.pop();
-                      },
-                      icon: const Icon(Icons.arrow_back)),
-                  Padding(
-                    padding: EdgeInsets.only(left: middleWidth),
-                    child: const Text(
-                      "Create New Shop",
-                      style: TextStyle(fontSize: 20),
+        child: Form(
+          key: createNewShopbloc.formkey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          StarlightUtils.pop();
+                        },
+                        icon: const Icon(Icons.arrow_back)),
+                    Padding(
+                      padding: EdgeInsets.only(left: middleWidth),
+                      child: const Text(
+                        "Create New Shop",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 40, bottom: 10),
-              child: ShopCoverPhotoPicker(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextFormField(
-                controller: createNewShopbloc.controller,
-                decoration: const InputDecoration(hintText: "Shop Name"),
+              const Padding(
+                padding: EdgeInsets.only(top: 40, bottom: 10),
+                child: ShopCoverPhotoPicker(),
               ),
-            ),
-            SizedBox(
-                width: context.width - 40,
-                height: 55,
-                child: const CreateNewShopSubmitButton()),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: TextFormField(
+                  validator: (v) {
+                    return v?.isNotEmpty == true
+                        ? v!.contains("_") == true
+                            ? "_ is not accept"
+                            : null
+                        : "shop name is required";
+                  },
+                  controller: createNewShopbloc.controller,
+                  decoration: const InputDecoration(hintText: "Shop Name"),
+                ),
+              ),
+              SizedBox(
+                  width: context.width - 40,
+                  height: 55,
+                  child: const CreateNewShopSubmitButton()),
+            ],
+          ),
         ),
       ),
     );
@@ -70,18 +80,35 @@ class CreateNewShopSubmitButton extends StatelessWidget {
     return ElevatedButton.icon(
       label: BlocConsumer<CreateNewShopBloc, CreateNewShopState>(
           listenWhen: (p, c) {
-        return c is CreateNewShopCreatedState;
+        return c is CreateNewShopCreatedState || c is CreateNewShopErrorState;
       }, listener: (context, state) {
+        print("state is $state");
         if (state is CreateNewShopCreatedState) {
           StarlightUtils.pop();
-          StarlightUtils.dialog(SnackBar(
-              content:
-                  Text("${createNewShopbloc.controller.text} was created")));
+          StarlightUtils.dialog(AlertDialog(
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    StarlightUtils.pop();
+                  },
+                  child: const Text("OK"))
+            ],
+            title: Text(
+              "${createNewShopbloc.controller.text} was created",
+              style: const TextStyle(fontSize: 24),
+            ),
+          ));
           return;
         }
         if (state is CreateNewShopErrorState) {
-          StarlightUtils.dialog(
-              const SnackBar(content: Text("Please choose a picture")));
+          StarlightUtils.pop();
+          StarlightUtils.dialog(AlertDialog(actions: [
+            TextButton(
+                onPressed: () {
+                  StarlightUtils.pop();
+                },
+                child: const Text("OK"))
+          ], content: const Text("Please choose a picture")));
         }
       }, buildWhen: (p, c) {
         return c is CreateNewShopCreatedState ||

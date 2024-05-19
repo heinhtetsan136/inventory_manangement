@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:inventory_management_app/core/db/database_interface.dart';
+import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/core/db/interface/table.dart';
 import 'package:inventory_management_app/core/db/utils/table_utils.dart';
+import 'package:inventory_management_app/logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -22,6 +24,7 @@ class SqlliteDatabase extends DataStore<Database> {
   static SqlliteDatabase newInstance(
       String dbName, Map<int, Map<String, List<TableProperties>>> tableColumns,
       [int version = 1]) {
+    assert(_instance[dbName] == null);
     _instance[dbName] ??= SqlliteDatabase._(dbName, tableColumns, version);
     return _instance[dbName]!;
   }
@@ -92,6 +95,8 @@ class SqlliteDatabase extends DataStore<Database> {
 
   @override
   Future<void> close() async {
+    logger.i("database sql close");
+    print("database close ${database == null}");
     assert(database != null);
     await database!.close();
     _instance.remove(dbName);
@@ -100,27 +105,39 @@ class SqlliteDatabase extends DataStore<Database> {
   }
 
   @override
-  Future<void> connect() async {
-    print(database != null);
-    if (database != null) return;
-    await checkStorePath();
-    final File dbFile = File("${doc!.path}/$dbName");
-    if (!(await dbFile.exists())) {
-      print("object");
-      dbFile.create();
+  Future<Result> connect() async {
+    print("database ${database != null}");
+    logger.i("database sql created");
+    if (database != null) return Result(result: database);
+    try {
+      await checkStorePath();
+      final File dbFile = File("${doc!.path}/$dbName");
+      if (!(await dbFile.exists())) {
+        print("object");
+        dbFile.create();
+      }
+      database = await openDatabase(
+        dbFile.path,
+        version: version,
+        onConfigure: (db) {
+          database = db;
+        },
+        onCreate: (db, version) async {
+          await OnUp(version, db);
+          print("reach");
+        },
+        onDowngrade: (db, old, current) async {
+          await OnDown(old, current, db);
+        },
+      );
+      print("database $database");
+      return Result(result: database);
+    } catch (e) {
+      return Result(
+          exception: ResultException(
+        e.toString(),
+      ));
     }
-    database = await openDatabase(
-      dbFile.path,
-      version: version,
-      onCreate: (db, version) async {
-        await OnUp(version, db);
-        print("reach");
-      },
-      onDowngrade: (db, old, current) async {
-        await OnDown(old, current, db);
-      },
-    );
-    print("database $database");
   }
 
   Future<void> checkStorePath() async {

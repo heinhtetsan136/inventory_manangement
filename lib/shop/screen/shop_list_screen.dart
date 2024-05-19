@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management_app/route/route_name.dart';
@@ -46,7 +48,8 @@ class ShopList extends StatelessWidget {
     //       name: "Shop name ${timer.tick}", cover_photo: "test ${timer.tick}"));
     // });
     return BlocBuilder<ShopListBloc, ShopListState>(builder: (_, state) {
-      final int totalShops = state.list.length;
+      final shop = state.list;
+      final int totalShops = shop.length;
       double shopListHeight = context.height * 0.38;
       if (totalShops == 0) {
         return SizedBox(
@@ -72,22 +75,31 @@ class ShopList extends StatelessWidget {
               itemBuilder: (_, i) {
                 return Card(
                   elevation: 0.5,
-                  child: Container(
-                    height: 69,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 25,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text("Shop_name ${state.list.map((e) => e.name)}"),
-                      ],
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      print(shop[i].name);
+                      _gotoDashboardScreen(shop[i].name);
+                    },
+                    child: Container(
+                      height: 69,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundImage:
+                                FileImage(File(shop[i].cover_photo)),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(" ${shop[i].name}"),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -95,5 +107,10 @@ class ShopList extends StatelessWidget {
         ),
       );
     });
+  }
+
+  void _gotoDashboardScreen(String shopName) {
+    StarlightUtils.pushReplacementNamed(RouteNames.dashboardloader,
+        arguments: shopName);
   }
 }

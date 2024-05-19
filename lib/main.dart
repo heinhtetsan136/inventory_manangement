@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_management_app/container.dart';
-import 'package:inventory_management_app/route/route.dart';
+import 'package:inventory_management_app/route/router.dart';
 import 'package:inventory_management_app/theme/theme.dart';
 import 'package:starlight_utils/starlight_utils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setUp();
-  // await shopDb.removeAllSqliteFile();
+  // await container.get<SqlliteDatabase>().removeAllSqliteFile();
   runApp(const MyApp());
 }
 
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
     final lighttheme = LightTheme();
     return MaterialApp(
       navigatorKey: StarlightUtils.navigatorKey,
-      onGenerateRoute: route,
+      onGenerateRoute: router,
 
       title: 'Flutter Demo',
       theme: lighttheme.theme,

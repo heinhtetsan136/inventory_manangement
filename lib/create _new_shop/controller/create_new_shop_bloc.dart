@@ -7,10 +7,11 @@ import 'package:inventory_management_app/create%20_new_shop/controller/create_ne
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
 import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
-import 'package:inventory_management_app/repo/shop_repo/shop_repo.dart';
+import 'package:inventory_management_app/repo/shop_repo/sqlshop_repo.dart';
 
 class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
   final TextEditingController controller;
+
   final SqlShopRepo shopRepo;
   final ImagePicker imagePicker;
   CreateNewShopBloc(super.initialState, this.imagePicker, this.shopRepo)
@@ -21,7 +22,9 @@ class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
 
   FutureOr<void> _createNewShopCreateShopEvent(event, emit) async {
     logger.i(event);
-    if (state.coverPhotoPath == null || state is CreateNewShopCreatingState) {
+    assert(formkey?.currentState?.validate() == true &&
+        state.coverPhotoPath != null);
+    if (state is CreateNewShopCreatingState) {
       return;
     }
     emit(CreateNewShopCreatingState(coverPhotoPath: state.coverPhotoPath));
@@ -41,8 +44,10 @@ class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
     emit(CreateNewShopCoverPhotoSelectedState(coverPhotoPath: file.path));
   }
 
+  final GlobalKey<FormState>? formkey = GlobalKey<FormState>();
   @override
   Future<void> close() {
+    formkey == null;
     controller.dispose();
     // TODO: implement close
     return super.close();
