@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventory_management_app/container.dart';
-import 'package:inventory_management_app/dashboard/controller/dasgboard_engine_state.dart';
-import 'package:inventory_management_app/dashboard/controller/dashboard_engine_event.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_event.dart';
 import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/dashboard/dashboard_repo.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inventory_management_app/dashboard/controller/dasgboard_engine_state.dart';
-import 'package:inventory_management_app/dashboard/controller/dashboard_engine_bloc.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
 import 'package:inventory_management_app/route/route_name.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:starlight_utils/starlight_utils.dart';

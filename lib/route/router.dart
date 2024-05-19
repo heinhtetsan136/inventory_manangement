@@ -7,8 +7,10 @@ import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_bloc.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
 import 'package:inventory_management_app/create%20_new_shop/screen/create_new_shop_screen.dart';
-import 'package:inventory_management_app/dashboard/controller/dasgboard_engine_state.dart';
-import 'package:inventory_management_app/dashboard/controller/dashboard_engine_bloc.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_bloc.dart';
+import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_state.dart';
 import 'package:inventory_management_app/dashboard/screen/dashboard_loader_screen.dart';
 import 'package:inventory_management_app/dashboard/screen/dashboard_screen.dart';
 import 'package:inventory_management_app/logger/logger.dart';
@@ -73,6 +75,9 @@ final Map<String, Route Function(RouteSettings settings)> route = {
     return _route(
         MultiBlocProvider(providers: [
           BlocProvider.value(value: container.get<DashBoardEngineBloc>()),
+          BlocProvider(
+              create: (_) =>
+                  DashBoardNavigationBloc(DashboardNavigationSate(0)))
         ], child: const DashBoardScreen()),
         settings);
   }
