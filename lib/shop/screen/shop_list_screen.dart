@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management_app/create_new_category/widget/bloc_outlinded_button.dart';
 import 'package:inventory_management_app/route/route_name.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_bloc.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_state.dart';
@@ -26,11 +27,11 @@ class ShopListScreen extends StatelessWidget {
           Container(
             width: context.width * 0.87,
             margin: const EdgeInsets.only(left: 2, right: 2, top: 20),
-            child: OutlinedButton(
+            child: CustomOutLinededButton(
                 onPressed: () {
                   StarlightUtils.pushNamed(RouteNames.createNewShop);
                 },
-                child: const Text("Create New Shop")),
+                label: "Create New Shop"),
           ),
         ],
       ),

@@ -81,11 +81,11 @@ class CreateNewShopSubmitButton extends StatelessWidget {
       label: BlocConsumer<CreateNewShopBloc, CreateNewShopState>(
           listenWhen: (p, c) {
         return c is CreateNewShopCreatedState || c is CreateNewShopErrorState;
-      }, listener: (context, state) {
+      }, listener: (context, state) async {
         print("state is $state");
         if (state is CreateNewShopCreatedState) {
           StarlightUtils.pop();
-          StarlightUtils.dialog(AlertDialog(
+          await StarlightUtils.dialog(AlertDialog(
             actions: [
               TextButton(
                   onPressed: () {
@@ -101,14 +101,20 @@ class CreateNewShopSubmitButton extends StatelessWidget {
           return;
         }
         if (state is CreateNewShopErrorState) {
-          StarlightUtils.pop();
-          StarlightUtils.dialog(AlertDialog(actions: [
-            TextButton(
-                onPressed: () {
-                  StarlightUtils.pop();
-                },
-                child: const Text("OK"))
-          ], content: const Text("Please choose a picture")));
+          await StarlightUtils.dialog(AlertDialog(
+            title: const Text(
+              "Failed to Create",
+              style: TextStyle(fontSize: 20),
+            ),
+            content: Text(state.message),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    StarlightUtils.pop();
+                  },
+                  child: const Text("OK"))
+            ],
+          ));
         }
       }, buildWhen: (p, c) {
         return c is CreateNewShopCreatedState ||

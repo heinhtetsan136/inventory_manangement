@@ -22,8 +22,11 @@ class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
 
   FutureOr<void> _createNewShopCreateShopEvent(event, emit) async {
     logger.i(event);
-    assert(formkey?.currentState?.validate() == true &&
-        state.coverPhotoPath != null);
+    assert(formkey?.currentState?.validate() == true);
+    if (state.coverPhotoPath == null) {
+      return emit(CreateNewShopErrorState(
+          coverPhotoPath: null, message: "Cover Photo is Missing"));
+    }
     if (state is CreateNewShopCreatingState) {
       return;
     }
@@ -31,7 +34,9 @@ class CreateNewShopBloc extends Bloc<CreateNewShopEvent, CreateNewShopState> {
     final result = await shopRepo.create(ShopParams.toCreate(
         name: controller.text, cover_photo: state.coverPhotoPath!));
     if (result.hasError) {
-      emit(CreateNewShopErrorState(coverPhotoPath: state.coverPhotoPath));
+      emit(CreateNewShopErrorState(
+          coverPhotoPath: state.coverPhotoPath,
+          message: result.exception!.message));
       return;
     }
     emit(CreateNewShopCreatedState());

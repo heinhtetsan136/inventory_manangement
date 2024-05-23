@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management_app/category/view/category_list_view.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_bloc.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_event.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_state.dart';
@@ -11,6 +12,15 @@ class DashBoardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigationbloc = context.read<DashBoardNavigationBloc>();
     return Scaffold(
+      body: BlocBuilder<DashBoardNavigationBloc, DashboardNavigationSate>(
+          builder: (_, state) {
+        return [
+          const CategoryListView(),
+          const CategoryListView(),
+          const CategoryListView(),
+          const CategoryListView(),
+        ][state.i];
+      }),
       bottomNavigationBar:
           BlocBuilder<DashBoardNavigationBloc, DashboardNavigationSate>(
               builder: (_, state) {
