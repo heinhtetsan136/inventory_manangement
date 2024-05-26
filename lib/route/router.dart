@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:inventory_management_app/category/controller/category_list_bloc.dart';
 import 'package:inventory_management_app/container.dart';
+import 'package:inventory_management_app/core/bloc/sql_read_state.dart';
 import 'package:inventory_management_app/core/db/const/const.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_bloc.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
 import 'package:inventory_management_app/create%20_new_shop/screen/create_new_shop_screen.dart';
+import 'package:inventory_management_app/create_new_category/controller/create_new_category_bloc.dart';
+import 'package:inventory_management_app/create_new_category/controller/create_new_category_state.dart';
 import 'package:inventory_management_app/create_new_category/screen/create_new_category_screen.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
@@ -15,11 +19,13 @@ import 'package:inventory_management_app/dashboard/controller/dashboard_navigati
 import 'package:inventory_management_app/dashboard/screen/dashboard_loader_screen.dart';
 import 'package:inventory_management_app/dashboard/screen/dashboard_screen.dart';
 import 'package:inventory_management_app/logger/logger.dart';
+import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
+import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
 import 'package:inventory_management_app/repo/dashboard/dashboard_repo.dart';
+import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
 import 'package:inventory_management_app/repo/shop_repo/sqlshop_repo.dart';
 import 'package:inventory_management_app/route/route_name.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_bloc.dart';
-import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_state.dart';
 import 'package:inventory_management_app/shop/screen/shop_list_screen.dart';
 
 final Map<String, Route Function(RouteSettings settings)> route = {
@@ -75,6 +81,9 @@ final Map<String, Route Function(RouteSettings settings)> route = {
     }
     return _route(
         MultiBlocProvider(providers: [
+          BlocProvider(
+              create: (_) => CategoryListBloc(SqliteInitialState(<Category>[]),
+                  container.get<SqliteCategoryRepo>())),
           BlocProvider.value(value: container.get<DashBoardEngineBloc>()),
           BlocProvider(
               create: (_) =>
@@ -83,7 +92,13 @@ final Map<String, Route Function(RouteSettings settings)> route = {
         settings);
   },
   RouteNames.createNewCategory: (settings) {
-    return _route(const CreateNewCategoryScreen(), settings);
+    return _route(
+        BlocProvider(
+          child: const CreateNewCategoryScreen(),
+          create: (_) => CreateNewCategoryBloc(CreateNewCategoryInitialState(),
+              container.get<SqliteCategoryRepo>()),
+        ),
+        settings);
   }
 };
 Route router(RouteSettings settings) {
@@ -94,8 +109,8 @@ Route _shoplist(RouteSettings settings) {
   return _route(
       BlocProvider(
         child: const ShopListScreen(),
-        create: (_) =>
-            ShopListBloc(ShopListInitialState(), container.get<SqlShopRepo>()),
+        create: (_) => ShopListBloc(
+            SqliteInitialState<Shop>(<Shop>[]), container.get<SqlShopRepo>()),
       ),
       settings);
 }

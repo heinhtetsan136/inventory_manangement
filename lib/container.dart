@@ -10,6 +10,7 @@ final Container container = Container();
 Future<void> setUp() async {
   Bloc.observer = CustomBlocObserver();
   container.setLazy(() => SqlShopRepo(container.get<SqlliteDatabase>()));
+  // container.setLazy(() => SqliteCategoryRepo(container.get<SqlliteDatabase>()));
   container.setLazy(() => ImagePicker());
   container.setSingletone(
       SqlliteDatabase.newInstance(shopDbName, shopTableColumn, 1));

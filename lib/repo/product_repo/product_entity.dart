@@ -6,10 +6,10 @@ import 'package:inventory_management_app/repo/category_repo/category_entity.dart
 class Product extends DatabaseModel {
   final String name;
   final int category_id;
-  final Categories? category;
+  final Category? category;
   final String barcode;
-  final DateTime created_At;
-  final DateTime? updated_At;
+  final DateTime created_at;
+  final DateTime? updated_at;
 
   Product(
       {required this.name,
@@ -17,8 +17,8 @@ class Product extends DatabaseModel {
       required this.category_id,
       required this.category,
       required this.barcode,
-      required this.created_At,
-      required this.updated_At});
+      required this.created_at,
+      required this.updated_at});
   factory Product.fromJson(dynamic data) {
     print(
         "crated ${data['category_created_at'] != null} ${data['category_created_at']} ${data['category_name']}");
@@ -28,8 +28,8 @@ class Product extends DatabaseModel {
       categoryPayload = {};
       categoryPayload['id'] = categoryId;
       categoryPayload['name'] = data['category_name'];
-      categoryPayload['created_At'] = data['category_created_at'];
-      categoryPayload['updated_At'] = data['category_updated_at'];
+      categoryPayload['created_at'] = data['category_created_at'];
+      categoryPayload['updated_at'] = data['category_updated_at'];
     }
     print("cp $categoryPayload");
     return Product(
@@ -38,12 +38,12 @@ class Product extends DatabaseModel {
         category_id: int.parse(data["category_id"].toString()),
         category: categoryPayload == null
             ? null
-            : Categories.fromJson(
+            : Category.fromJson(
                 categoryPayload,
               ),
         barcode: data["barcode"],
-        created_At: DateTime.parse(data["created_At"].toString()),
-        updated_At: DateTime.tryParse(data["updated_At"] ?? ""));
+        created_at: DateTime.parse(data["created_at"].toString()),
+        updated_at: DateTime.tryParse(data["updated_at"] ?? ""));
   }
   @override
   Map<String, dynamic> toJson() {
@@ -53,8 +53,8 @@ class Product extends DatabaseModel {
       "name": name,
       "category": category?.toJson(),
       "barcode": barcode,
-      "created_At": created_At.toIso8601String(),
-      "updated_At": updated_At?.toIso8601String(),
+      "created_at": created_at.toIso8601String(),
+      "updated_at": updated_at?.toIso8601String(),
     };
   }
 

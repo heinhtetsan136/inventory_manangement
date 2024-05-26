@@ -10,7 +10,8 @@ class CustomOutLinededButton<State extends Object,
   final Widget? Function(State state)? placeHolder;
   final IconData? icon;
   final ButtonStyle? buttonStyle;
-  final bool Function(State, State)? buildWhen;
+  final bool Function(State, State)? buildWhen, listenWhen;
+  final void Function(BuildContext, Bloc bloc, State)? listener;
   const CustomOutLinededButton({
     super.key,
     required Function()? onPressed,
@@ -21,16 +22,20 @@ class CustomOutLinededButton<State extends Object,
         usebloc = false,
         _onPressed = onPressed,
         _bloconPressed = null,
+        listenWhen = null,
+        listener = null,
         buildWhen = null;
-  const CustomOutLinededButton.bloc({
-    super.key,
-    required Function(Bloc bloc) onPressed,
-    required this.label,
-    this.icon,
-    this.placeHolder,
-    this.buttonStyle,
-    this.buildWhen,
-  })  : usebloc = true,
+  const CustomOutLinededButton.bloc(
+      {super.key,
+      required Function(Bloc bloc) onPressed,
+      required this.label,
+      this.icon,
+      this.placeHolder,
+      this.buttonStyle,
+      this.buildWhen,
+      this.listener,
+      this.listenWhen})
+      : usebloc = true,
         _bloconPressed = onPressed,
         _onPressed = null;
 
@@ -56,7 +61,11 @@ class CustomOutLinededButton<State extends Object,
       onPressed: () {
         _bloconPressed?.call(bloc);
       },
-      child: BlocBuilder<Bloc, State>(
+      child: BlocConsumer<Bloc, State>(
+          listenWhen: listenWhen,
+          listener: (context, state) {
+            listener?.call(context, bloc, state);
+          },
           buildWhen: buildWhen,
           builder: (_, state) {
             return placeHolder?.call(state) ?? child;

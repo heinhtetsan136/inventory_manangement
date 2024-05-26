@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management_app/core/utils/dialog.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
 import 'package:inventory_management_app/route/route_name.dart';
@@ -23,21 +24,8 @@ class DashBoardLoader extends StatelessWidget {
           );
         }
         if (state is DashboardEngineErrorState) {
-          await StarlightUtils.dialog(AlertDialog(
-            title: const Text(
-              "Failed to Load DashBoard",
-              style: TextStyle(fontSize: 20),
-            ),
-            content: Text(state.message),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    StarlightUtils.pop();
-                    StarlightUtils.pushReplacementNamed(RouteNames.shopList);
-                  },
-                  child: const Text("OK"))
-            ],
-          ));
+          await dialog("Failed to Load DashBoard", state.message);
+          StarlightUtils.pushReplacementNamed(RouteNames.shopList);
         }
       },
       child: Scaffold(

@@ -5,6 +5,8 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/core/db/interface/database_crud.dart';
 import 'package:sqflite/sqflite.dart';
 
+const Map<int, String> sqlError = {2067: "Already exists!"};
+
 class sqliteRepo<Model extends DatabaseModel,
         ModelParams extends DatabaseParamModel>
     implements DatabaseCrud<Database, Model, ModelParams> {
@@ -23,18 +25,27 @@ class sqliteRepo<Model extends DatabaseModel,
     final mapkey = payload.keys.map((e) {
       return " ${e.toString()}";
     });
-    payload.addEntries({MapEntry("created_At", DateTime.now())});
+    payload.addEntries({MapEntry("created_at", DateTime.now())});
 
-    final insertedId = await database
-        .rawInsert('''insert into "$tableName" (${payload.keys.join(",")}) 
+    try {
+      final insertedId = await database
+          .rawInsert('''insert into "$tableName" (${payload.keys.join(",")}) 
         values (${payload.values.map((e) => "'$e'").join(",")})''');
-    // final result = await database.insert(tableName, map);
-    print("result $insertedId");
+      // final result = await database.insert(tableName, map);
+      print("result $insertedId");
 
-    final model = await getOne(insertedId);
-    _streamController.sink.add(DatabaseCrudOnchange.DatabaseCrudOnActions(
-        model: model, operations: DatabaseCrudCreateOperations()));
-    return model;
+      final model = await getOne(insertedId);
+      _streamController.sink.add(DatabaseCrudOnchange.DatabaseCrudOnActions(
+          model: model, operations: DatabaseCrudCreateOperations()));
+      return model;
+    } on DatabaseException catch (e) {
+      return Result(
+          exception:
+              ResultException(sqlError[e.getResultCode()] ?? "Unknown Error"));
+    } catch (e) {
+      return Result(
+          exception: ResultException(e.toString(), StackTrace.current));
+    }
 
     // if (result.isEmpty) return null;
     // return Category.fromJson(result.first);
@@ -59,7 +70,7 @@ class sqliteRepo<Model extends DatabaseModel,
   Future<Result<Model>> update(int id, ModelParams values) async {
     final payload = values.toUpdate();
 
-    payload.addEntries({MapEntry("created_At", DateTime.now())});
+    payload.addEntries({MapEntry("created_at", DateTime.now())});
     final dataset = payload.keys.map((column) {
       return "$column ='${payload[column]}'";
     }).join(",");

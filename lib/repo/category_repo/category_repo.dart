@@ -4,10 +4,10 @@ import 'package:inventory_management_app/core/impl/sqlite_repo.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SqliteCategoryRepo extends sqliteRepo<Categories, CategoryParams> {
+class SqliteCategoryRepo extends sqliteRepo<Category, CategoryParams> {
   SqliteCategoryRepo(
     DataStore<Database> store,
-  ) : super.SqliteRepo(store, Categories.fromJson, categoriesTb);
+  ) : super.SqliteRepo(store, Category.fromJson, categoriesTb);
   @override
   // TODO: implement refQuery
   String get refQuery {

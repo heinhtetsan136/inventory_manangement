@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventory_management_app/core/bloc/sql_read_state.dart';
 import 'package:inventory_management_app/create_new_category/widget/bloc_outlinded_button.dart';
+import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
 import 'package:inventory_management_app/route/route_name.dart';
 import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_bloc.dart';
-import 'package:inventory_management_app/shop/controller/shop_listbloc/shop_list_state.dart';
 import 'package:starlight_utils/starlight_utils.dart';
 
 class ShopListScreen extends StatelessWidget {
@@ -48,7 +49,7 @@ class ShopList extends StatelessWidget {
     //   await context.read<ShopListBloc>().shop.create(ShopParams.toCreate(
     //       name: "Shop name ${timer.tick}", cover_photo: "test ${timer.tick}"));
     // });
-    return BlocBuilder<ShopListBloc, ShopListState>(builder: (_, state) {
+    return BlocBuilder<ShopListBloc, SqliteState<Shop>>(builder: (_, state) {
       final shop = state.list;
       final int totalShops = shop.length;
       double shopListHeight = context.height * 0.38;

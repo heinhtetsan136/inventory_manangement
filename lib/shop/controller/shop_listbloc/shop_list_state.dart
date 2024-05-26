@@ -1,17 +1,9 @@
+import 'package:inventory_management_app/core/bloc/basic_state.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
 
-abstract class ShopListState {
+abstract class ShopListState extends BasicState {
   final List<Shop> list;
-  final DateTime _dateTime;
-  ShopListState(this.list) : _dateTime = DateTime.now();
-  @override
-  bool operator ==(covariant ShopListState other) {
-    return other._dateTime.toIso8601String() == _dateTime.toIso8601String();
-  }
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => _dateTime.hashCode;
+  ShopListState(this.list);
 }
 
 class ShopListInitialState extends ShopListState {
