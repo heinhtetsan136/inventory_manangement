@@ -25,7 +25,11 @@ class SqlliteDatabase extends DataStore<Database> {
       String dbName, Map<int, Map<String, List<TableProperties>>> tableColumns,
       [int version = 1]) {
     assert(_instance[dbName] == null);
-    _instance[dbName] ??= SqlliteDatabase._(dbName, tableColumns, version);
+    _instance[dbName] ??= SqlliteDatabase._(
+      dbName,
+      tableColumns,
+      version,
+    );
     return _instance[dbName]!;
   }
 

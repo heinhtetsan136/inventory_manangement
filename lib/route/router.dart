@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inventory_management_app/category/controller/category_list_bloc.dart';
 import 'package:inventory_management_app/container.dart';
+import 'package:inventory_management_app/core/bloc/sql_create_state.dart';
 import 'package:inventory_management_app/core/bloc/sql_read_state.dart';
 import 'package:inventory_management_app/core/db/const/const.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
-import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_bloc.dart';
-import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_state.dart';
+import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_form.dart';
+import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_form_bloc.dart';
 import 'package:inventory_management_app/create%20_new_shop/screen/create_new_shop_screen.dart';
-import 'package:inventory_management_app/create_new_category/controller/create_new_category_bloc.dart';
-import 'package:inventory_management_app/create_new_category/controller/create_new_category_state.dart';
+import 'package:inventory_management_app/create_new_category/controller/create_new_category_form.dart';
+import 'package:inventory_management_app/create_new_category/controller/create_new_category_form_bloc.dart';
 import 'package:inventory_management_app/create_new_category/screen/create_new_category_screen.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
@@ -69,11 +70,20 @@ final Map<String, Route Function(RouteSettings settings)> route = {
   RouteNames.createNewShop: (settings) {
     return _route(
         BlocProvider(
-          create: (_) => CreateNewShopBloc(CreateNewShopInitialState(),
-              container.get<ImagePicker>(), container.get<SqlShopRepo>()),
+          create: (_) => CreateNewShopFormBloc(
+              SqliteCreateInitialState(),
+              container.get<SqlShopRepo>(),
+              ShopCreateForm.createForms(),
+              container.get<ImagePicker>()),
           child: const CreateNewShopScreen(),
         ),
         settings);
+    // BlocProvider(
+    //   create: (_) => CreateNewShopBloc(CreateNewShopInitialState(),
+    //       container.get<ImagePicker>(), container.get<SqlShopRepo>()),
+    //   child: const CreateNewShopScreen(),
+    // ),
+    // settings);
   },
   RouteNames.dashboard: (settings) {
     if (!container.exists<DashBoardEngineBloc>()) {
@@ -95,8 +105,11 @@ final Map<String, Route Function(RouteSettings settings)> route = {
     return _route(
         BlocProvider(
           child: const CreateNewCategoryScreen(),
-          create: (_) => CreateNewCategoryBloc(CreateNewCategoryInitialState(),
-              container.get<SqliteCategoryRepo>()),
+          create: (_) => CreateNewCategoryFormBloc(
+            SqliteCreateInitialState(),
+            container.get<SqliteCategoryRepo>(),
+            CreateNewCategoryForm.form(),
+          ),
         ),
         settings);
   }

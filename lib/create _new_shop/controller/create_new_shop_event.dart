@@ -1,11 +1,5 @@
-abstract class CreateNewShopEvent {
-  const CreateNewShopEvent();
-}
+import 'package:inventory_management_app/core/bloc/sql_create_event.dart';
 
-class CreateNewShopPickCoverPhotoEvent extends CreateNewShopEvent {
+class CreateNewShopPickCoverPhotoEvent extends SqlCreateBaseEvent {
   const CreateNewShopPickCoverPhotoEvent();
-}
-
-class CreateNewShopCreateShopEvent extends CreateNewShopEvent {
-  const CreateNewShopCreateShopEvent();
 }

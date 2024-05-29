@@ -1,37 +1,32 @@
+import 'package:inventory_management_app/core/bloc/sql_create_state.dart';
+
 abstract class CreateNewShopState {
-  final String? coverPhotoPath;
   final DateTime? dateTime;
 
-  CreateNewShopState({required this.coverPhotoPath})
-      : dateTime = DateTime.now();
+  CreateNewShopState() : dateTime = DateTime.now();
   @override
   bool operator ==(covariant CreateNewShopState other) {
-    return other.coverPhotoPath == coverPhotoPath && other.dateTime == dateTime;
+    return other.dateTime == dateTime;
   }
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => coverPhotoPath.hashCode;
 }
 
 class CreateNewShopInitialState extends CreateNewShopState {
-  CreateNewShopInitialState() : super(coverPhotoPath: null);
+  CreateNewShopInitialState() : super();
 }
 
-class CreateNewShopCoverPhotoSelectedState extends CreateNewShopState {
-  CreateNewShopCoverPhotoSelectedState({required super.coverPhotoPath});
+class CreateNewShopCoverPhotoSelectedState extends SqlCreateState {
+  CreateNewShopCoverPhotoSelectedState();
 }
 
 class CreateNewShopCreatingState extends CreateNewShopState {
-  CreateNewShopCreatingState({required super.coverPhotoPath});
+  CreateNewShopCreatingState();
 }
 
 class CreateNewShopCreatedState extends CreateNewShopState {
-  CreateNewShopCreatedState() : super(coverPhotoPath: null);
+  CreateNewShopCreatedState();
 }
 
 class CreateNewShopErrorState extends CreateNewShopState {
   final String message;
-  CreateNewShopErrorState(
-      {required super.coverPhotoPath, required this.message});
+  CreateNewShopErrorState({required this.message});
 }
