@@ -5,7 +5,7 @@ import 'package:inventory_management_app/category/controller/category_list_bloc.
 import 'package:inventory_management_app/container.dart';
 import 'package:inventory_management_app/core/bloc/sql_create_state.dart';
 import 'package:inventory_management_app/core/bloc/sql_read_state.dart';
-import 'package:inventory_management_app/core/db/const/const.dart';
+import 'package:inventory_management_app/core/db/const/sql_table_const.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_form.dart';
 import 'package:inventory_management_app/create%20_new_shop/controller/create_new_shop_form_bloc.dart';
@@ -58,7 +58,7 @@ final Map<String, Route Function(RouteSettings settings)> route = {
                   DashBoardEngineRepo(
                       shopName: arg,
                       database: SqlliteDatabase.newInstance(
-                          arg, inventory_manangement_tableColumns))),
+                          arg, inventory_manangement_tableColumns, 2))),
             );
 
             return container.get<DashBoardEngineBloc>();

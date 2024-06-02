@@ -4,21 +4,17 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
 
 class Product extends DatabaseModel {
-  final String name;
-  final int category_id;
-  final Category? category;
-  final String barcode;
-  final DateTime created_at;
-  final DateTime? updated_at;
+  Product({
+    required this.name,
+    required super.id,
+    required this.category_id,
+    required this.category,
+    required this.barcode,
+    required this.created_at,
+    required this.updated_at,
+    required this.description,
+  });
 
-  Product(
-      {required this.name,
-      required super.id,
-      required this.category_id,
-      required this.category,
-      required this.barcode,
-      required this.created_at,
-      required this.updated_at});
   factory Product.fromJson(dynamic data) {
     print(
         "crated ${data['category_created_at'] != null} ${data['category_created_at']} ${data['category_name']}");
@@ -43,8 +39,18 @@ class Product extends DatabaseModel {
               ),
         barcode: data["barcode"],
         created_at: DateTime.parse(data["created_at"].toString()),
+        description: data["description"],
         updated_at: DateTime.tryParse(data["updated_at"] ?? ""));
   }
+
+  final String barcode;
+  final Category? category;
+  final int category_id;
+  final DateTime created_at;
+  final String description;
+  final String name;
+  final DateTime? updated_at;
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -55,6 +61,7 @@ class Product extends DatabaseModel {
       "barcode": barcode,
       "created_at": created_at.toIso8601String(),
       "updated_at": updated_at?.toIso8601String(),
+      "description": description,
     };
   }
 
@@ -65,31 +72,52 @@ class Product extends DatabaseModel {
 }
 
 class ProductParams extends DatabaseParamModel {
-  final String name;
-  final int category_id;
-
-  final String barcode;
-
   ProductParams._(
-      {required this.name, required this.category_id, required this.barcode});
-  factory ProductParams.created(
-    final String name,
-    final int category_id,
-    final String barcode,
-  ) {
+      {required this.name,
+      required this.category_id,
+      required this.barcode,
+      required this.description});
+
+  factory ProductParams.created({
+    required String name,
+    required int category_id,
+    required String barcode,
+    String description = "",
+  }) {
     return ProductParams._(
-        name: name, category_id: category_id, barcode: barcode);
+        name: name,
+        category_id: category_id,
+        barcode: barcode,
+        description: description);
   }
+
   factory ProductParams.update(
     final String? name,
     final int? category_id,
     final String? barcode,
+    String? description,
   ) {
     return ProductParams._(
         name: name ?? "",
         category_id: category_id ?? -1,
-        barcode: barcode ?? "");
+        barcode: barcode ?? "",
+        description: description ?? "");
   }
+
+  final String barcode;
+  final int category_id;
+  final String name;
+  final String description;
+  @override
+  Map<String, dynamic> toCreate() {
+    return {
+      "category_id": category_id,
+      "name": name,
+      "barcode": barcode,
+      "description": description,
+    };
+  }
+
   @override
   Map<String, dynamic> toUpdate() {
     assert(name.isNotEmpty || category_id > 0 || barcode.isNotEmpty);
@@ -102,17 +130,11 @@ class ProductParams extends DatabaseParamModel {
     }
     if (barcode.isNotEmpty == true) {
       payload["barcode"] = barcode;
+      if (description.isNotEmpty == true) {
+        payload["description"] = description;
+      }
     }
 
     return payload;
-  }
-
-  @override
-  Map<String, dynamic> toCreate() {
-    return {
-      "category_id": category_id,
-      "name": name,
-      "barcode": barcode,
-    };
   }
 }
