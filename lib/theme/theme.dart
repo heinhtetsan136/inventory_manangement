@@ -74,8 +74,8 @@ abstract class StandardTheme {
         ),
         textButtonTheme: TextButtonThemeData(
           style: buttonStyle.copyWith(
-            foregroundColor: MaterialStatePropertyAll(primaryColor),
-            shape: const MaterialStatePropertyAll(null),
+            foregroundColor: WidgetStatePropertyAll(primaryColor),
+            shape: const WidgetStatePropertyAll(null),
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
@@ -83,8 +83,8 @@ abstract class StandardTheme {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: buttonStyle.copyWith(
-            backgroundColor: MaterialStatePropertyAll(primaryColor),
-            foregroundColor: MaterialStatePropertyAll(cardColor),
+            backgroundColor: WidgetStatePropertyAll(primaryColor),
+            foregroundColor: WidgetStatePropertyAll(cardColor),
           ),
         ),
         listTileTheme: ListTileThemeData(
@@ -96,15 +96,15 @@ abstract class StandardTheme {
           ),
         ),
         switchTheme: SwitchThemeData(
-          trackOutlineWidth: const MaterialStatePropertyAll(0),
-          trackColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.selected)) {
+          trackOutlineWidth: const WidgetStatePropertyAll(0),
+          trackColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
               return primaryColor;
             }
             return unselectedWidgetColor;
           }),
-          trackOutlineColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.selected)) {
+          trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
               return primaryColor;
             }
             return unselectedWidgetColor;
@@ -163,19 +163,19 @@ class LightTheme extends StandardTheme {
 
   @override
   ButtonStyle get buttonStyle => ButtonStyle(
-        shape: MaterialStatePropertyAll(
+        shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: borderRadius,
             side: borderSide,
           ),
         ),
-        foregroundColor: MaterialStatePropertyAll(
+        foregroundColor: WidgetStatePropertyAll(
           outlinedButtonTextColor,
         ),
-        textStyle: MaterialStatePropertyAll(
+        textStyle: WidgetStatePropertyAll(
           buttonTextStyle,
         ),
-        elevation: const MaterialStatePropertyAll(0),
-        overlayColor: MaterialStatePropertyAll(primaryColor.withOpacity(0.06)),
+        elevation: const WidgetStatePropertyAll(0),
+        overlayColor: WidgetStatePropertyAll(primaryColor.withOpacity(0.06)),
       );
 }

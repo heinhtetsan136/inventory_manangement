@@ -3,5 +3,8 @@ class RouteNames {
       createNewShop = "/createNewShop",
       dashboardloader = "/dashboarder",
       dashboard = "/dashboard",
-      createNewCategory = "/createNewCategory";
+      createNewProduct = "/createNewProduct",
+      createNewCategory = "/createNewCategory",
+      addCategoryScreen = "/add/Category",
+      setProductPriceScreen = "/add/ProductPrice";
 }

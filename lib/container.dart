@@ -14,6 +14,19 @@ Future<void> setUp() async {
   container.setLazy(() => ImagePicker());
   container.setSingletone(
       SqlliteDatabase.newInstance(shopDbName, shopTableColumn, 2));
-
+  final dbv1 = SqlliteDatabase.newInstance(
+    "migrat_test_4",
+    inventory_manangement_tableColumns,
+    1,
+  );
+  await dbv1.connect();
+  await dbv1.close();
+  final dbv2 = SqlliteDatabase.newInstance(
+    "migrat_test_4",
+    inventory_manangement_tableColumns,
+    2,
+  );
+  await dbv2.connect();
+  await dbv2.close();
   await container.get<SqlliteDatabase>().connect();
 }

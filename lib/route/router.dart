@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inventory_management_app/category/controller/category_list_bloc.dart';
+import 'package:inventory_management_app/category/view/add_category_screen.dart';
 import 'package:inventory_management_app/container.dart';
-import 'package:inventory_management_app/core/bloc/sql_create_state.dart';
 import 'package:inventory_management_app/core/bloc/sql_read_state.dart';
 import 'package:inventory_management_app/core/db/const/sql_table_const.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
@@ -13,6 +13,10 @@ import 'package:inventory_management_app/create%20_new_shop/screen/create_new_sh
 import 'package:inventory_management_app/create_new_category/controller/create_new_category_form.dart';
 import 'package:inventory_management_app/create_new_category/controller/create_new_category_form_bloc.dart';
 import 'package:inventory_management_app/create_new_category/screen/create_new_category_screen.dart';
+import 'package:inventory_management_app/create_new_product/controller/create_new_product_bloc.dart';
+import 'package:inventory_management_app/create_new_product/controller/create_product_form.dart';
+import 'package:inventory_management_app/create_new_product/screen/create_new_product_screen.dart';
+import 'package:inventory_management_app/create_new_product/screen/set_product_price_screen.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_navigation/dashboard_navigation_bloc.dart';
@@ -23,6 +27,7 @@ import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
 import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
 import 'package:inventory_management_app/repo/dashboard/dashboard_repo.dart';
+import 'package:inventory_management_app/repo/product_repo/product_repo.dart';
 import 'package:inventory_management_app/repo/shop_repo/shop_entity.dart';
 import 'package:inventory_management_app/repo/shop_repo/sqlshop_repo.dart';
 import 'package:inventory_management_app/route/route_name.dart';
@@ -58,7 +63,7 @@ final Map<String, Route Function(RouteSettings settings)> route = {
                   DashBoardEngineRepo(
                       shopName: arg,
                       database: SqlliteDatabase.newInstance(
-                          arg, inventory_manangement_tableColumns, 2))),
+                          arg, inventory_manangement_tableColumns, 3))),
             );
 
             return container.get<DashBoardEngineBloc>();
@@ -70,11 +75,8 @@ final Map<String, Route Function(RouteSettings settings)> route = {
   RouteNames.createNewShop: (settings) {
     return _route(
         BlocProvider(
-          create: (_) => CreateNewShopFormBloc(
-              SqliteCreateInitialState(),
-              container.get<SqlShopRepo>(),
-              ShopCreateForm.createForms(),
-              container.get<ImagePicker>()),
+          create: (_) => CreateNewShopFormBloc(container.get<SqlShopRepo>(),
+              ShopCreateForm.createForms(), container.get<ImagePicker>()),
           child: const CreateNewShopScreen(),
         ),
         settings);
@@ -106,12 +108,40 @@ final Map<String, Route Function(RouteSettings settings)> route = {
         BlocProvider(
           child: const CreateNewCategoryScreen(),
           create: (_) => CreateNewCategoryFormBloc(
-            SqliteCreateInitialState(),
             container.get<SqliteCategoryRepo>(),
             CreateNewCategoryForm.form(),
           ),
         ),
         settings);
+  },
+  RouteNames.createNewProduct: (settings) {
+    final value = settings.arguments;
+    if (value is! CategoryListBloc) {
+      return _route(ErrorWidget("CategoryListBloc Not Found"), settings);
+    }
+    return _route(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider(
+                create: (_) => CreateNewProductBloc(
+                    container.get<SqlProductRepo>(), CreateProductForm.form())),
+            BlocProvider.value(value: value)
+          ],
+          child: const CreateNewProductScreen(),
+        ),
+        settings);
+  },
+  RouteNames.addCategoryScreen: (settings) {
+    final bloc = settings.arguments;
+    if (bloc is! CategoryListBloc) {
+      return _route(ErrorWidget("CategoryListBloc not found"), settings);
+    }
+    return _route(
+        BlocProvider.value(value: bloc, child: const AddCategoryScreen()),
+        settings);
+  },
+  RouteNames.setProductPriceScreen: (settings) {
+    return _route(const SetProductPriceScreen(), settings);
   }
 };
 Route router(RouteSettings settings) {

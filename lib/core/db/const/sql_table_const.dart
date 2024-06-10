@@ -41,8 +41,10 @@ Map<int, Map<String, List<TableProperties>>> get shopTableColumn =>
     {1: _shopMigrationV1.table};
 final SqlInventoryMigrationV1 _inventorymigrationV1 = SqlInventoryMigrationV1();
 final SqlInventoryMigrationV2 _inventoryMigrationV2 = SqlInventoryMigrationV2();
+final SqlInventoryMigrationV3 _inventoryMigrationV3 = SqlInventoryMigrationV3();
 Map<int, Map<String, List<TableProperties>>>
     get inventory_manangement_tableColumns => {
           1: _inventorymigrationV1.table,
           2: _inventoryMigrationV2.table,
+          3: _inventoryMigrationV3.table
         };

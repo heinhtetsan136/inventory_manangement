@@ -5,7 +5,10 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/core/db/interface/database_crud.dart';
 import 'package:sqflite/sqflite.dart';
 
-const Map<int, String> sqlError = {2067: "Already exists!"};
+const Map<int, String> sqlError = {
+  2067: "Already exists!",
+  1: "Columns Not Found"
+};
 
 class sqliteRepo<Model extends DatabaseModel,
         ModelParams extends DatabaseParamModel>

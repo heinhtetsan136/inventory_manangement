@@ -92,6 +92,11 @@ class SqlInventoryMigration extends SqlBaseMigration {
               options: "default 0",
             ),
             const TableColumn(
+              name: "available",
+              type: "NUMERIC",
+              options: "default 0",
+            ),
+            const TableColumn(
               name: "lost",
               type: "NUMERIC",
               options: "default 0",
@@ -164,7 +169,28 @@ class SqlInventoryMigrationV2 extends SqlInventoryMigration {
   // TODO: implement up
   Map<String, List<TableProperties>> get up => {
         productTb: [
-          const TableColumn(name: "description", type: "varchar"),
+          const TableColumn(
+              name: "description", type: "varchar", options: " default ''"), //
+        ]
+      };
+}
+
+class SqlInventoryMigrationV3 extends SqlInventoryMigration {
+  @override
+  // TODO: implement down
+  Map<String, List<TableProperties>> get down => {};
+
+  @override
+  // TODO: implement up
+  Map<String, List<TableProperties>> get up => {
+        productTb: [
+          const TableColumn(
+              name: "description", type: "varchar", options: " default ''"),
+          const TableColumn(name: "photo", type: "varchar"),
+        ],
+        variantsTb: [
+          const TableColumn(
+              name: "allow_purchase_when_out_of_stock", type: "bool")
         ]
       };
 }

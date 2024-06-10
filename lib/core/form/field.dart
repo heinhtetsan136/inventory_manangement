@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Field<F> {
   bool isRequired;
   F? input;
@@ -10,6 +12,14 @@ class Field<F> {
     this.dispose,
   }) : assert(!isRequired && isValid == null || isRequired && isValid != null) {
     print("${input.toString()} $isRequired ${isValid.toString()}");
+  }
+  static Field<TextEditingController> textEditingController() {
+    return Field(
+        input: TextEditingController(),
+        isRequired: false,
+        dispose: (p0) {
+          p0?.dispose();
+        });
   }
 }
 

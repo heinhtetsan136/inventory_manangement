@@ -5,8 +5,10 @@ class FormBox extends StatelessWidget {
   final EdgeInsetsGeometry? padding, margin;
   final double? width, height;
   final Widget? child;
+  final AlignmentGeometry? alignment;
   const FormBox(
       {super.key,
+      this.alignment,
       this.padding,
       this.margin,
       required this.child,
@@ -16,12 +18,14 @@ class FormBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.center,
       width: width,
       height: height,
-      padding: padding ?? const EdgeInsets.all(20),
       margin: margin,
-      decoration: BoxDecoration(color: context.theme.cardColor),
+      padding: padding ?? const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: context.theme.cardColor,
+      ),
+      alignment: alignment,
       child: child,
     );
   }

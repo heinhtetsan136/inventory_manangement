@@ -11,8 +11,7 @@ import 'package:inventory_management_app/repo/shop_repo/sqlshop_repo.dart';
 class CreateNewShopFormBloc
     extends SqlCreateBloc<Shop, ShopParams, SqlShopRepo, ShopCreateForm> {
   final ImagePicker imagePicker;
-  CreateNewShopFormBloc(
-      super.initialState, super.repo, super.form, this.imagePicker) {
+  CreateNewShopFormBloc(super.repo, super.form, this.imagePicker) {
     on<CreateNewShopPickCoverPhotoEvent>(
         _createnewshoppickedcoverphotoEventListener);
     //   on<CreateNewShopCreateShopEvent>(_createnewshopcreateshopeventListener);

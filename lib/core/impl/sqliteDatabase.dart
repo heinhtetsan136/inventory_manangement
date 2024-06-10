@@ -77,6 +77,7 @@ class SqlliteDatabase extends DataStore<Database> {
       query += ");";
       return (db ?? database)!.execute(query);
     }));
+    logger.i("Migration Up");
   }
 
   @override
@@ -93,8 +94,8 @@ class SqlliteDatabase extends DataStore<Database> {
         drop table if exists "$e"; 
       """);
     }));
-
-    // await onUp(current, db);
+    logger.i("migration down");
+    await OnUp(current, db);
   }
 
   @override
@@ -105,7 +106,6 @@ class SqlliteDatabase extends DataStore<Database> {
     await database!.close();
     _instance.remove(dbName);
     // TODO: implement close
-    throw UnimplementedError();
   }
 
   @override
@@ -126,6 +126,11 @@ class SqlliteDatabase extends DataStore<Database> {
         onConfigure: (db) {
           database = db;
         },
+        onUpgrade: (db, old, current) async {
+          await OnDown(old, current, db);
+          await OnUp(current, db);
+        },
+        readOnly: false,
         onCreate: (db, version) async {
           await OnUp(version, db);
           print("reach");

@@ -5,7 +5,7 @@ import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
 
 class CreateNewCategoryFormBloc extends SqlCreateBloc<Category, CategoryParams,
     SqliteCategoryRepo, CreateNewCategoryForm> {
-  CreateNewCategoryFormBloc(super.initialState, super.repo, super.form) {
+  CreateNewCategoryFormBloc(super.repo, super.form) {
     print("categorystate is $state");
   }
   @override

@@ -13,6 +13,11 @@ class SqliteCreateInitialState extends SqlCreateState {}
 class SqlCreateErrorState extends SqlCreateState {
   final String message;
   SqlCreateErrorState(this.message);
+  @override
+  String toString() {
+    // TODO: implement toString
+    return """${runtimeType.toString()}"/n" $message""";
+  }
 }
 
 class SqlCreatedState extends SqlCreateState {

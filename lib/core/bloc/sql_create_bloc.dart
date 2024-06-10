@@ -15,7 +15,7 @@ abstract class SqlCreateBloc<
     extends Bloc<SqlCreateBaseEvent, SqlCreateState> {
   final Repo repo;
   final Forms form;
-  SqlCreateBloc(super.initialState, this.repo, this.form) {
+  SqlCreateBloc(this.repo, this.form) : super(SqliteCreateInitialState()) {
     on<SqlCreateEvent>(_sqlCreateEventListner);
   }
 
