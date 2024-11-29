@@ -38,6 +38,7 @@ class Result<T> {
 }
 
 abstract class DatabaseModel {
+  Map<String, dynamic> toJson();
   final int id;
   @override
   bool operator ==(covariant DatabaseModel other) {

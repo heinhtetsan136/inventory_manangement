@@ -5,6 +5,7 @@ import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/core/impl/sqliteDatabase.dart';
 import 'package:inventory_management_app/repo/category_repo/category_repo.dart';
 import 'package:inventory_management_app/repo/product_repo/product_repo.dart';
+import 'package:inventory_management_app/repo/variant_repo/variant_repo.dart';
 
 class DashBoardEngineRepo {
   final String shopName;
@@ -27,6 +28,9 @@ class DashBoardEngineRepo {
     });
     container.setLazy<SqlProductRepo>(() {
       return SqlProductRepo(_database);
+    });
+    container.setLazy<SqlVariantRepo>(() {
+      return SqlVariantRepo(_database);
     });
     _validate();
     _isReady.sink.add(result);

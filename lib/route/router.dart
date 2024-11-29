@@ -16,6 +16,7 @@ import 'package:inventory_management_app/create_new_category/screen/create_new_c
 import 'package:inventory_management_app/create_new_product/controller/create_new_product_bloc.dart';
 import 'package:inventory_management_app/create_new_product/controller/create_product_form.dart';
 import 'package:inventory_management_app/create_new_product/screen/create_new_product_screen.dart';
+import 'package:inventory_management_app/create_new_product/screen/set_product_inventory_screen.dart';
 import 'package:inventory_management_app/create_new_product/screen/set_product_price_screen.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dasgboard_engine_state.dart';
 import 'package:inventory_management_app/dashboard/controller/dashboard_engine/dashboard_engine_bloc.dart';
@@ -124,7 +125,9 @@ final Map<String, Route Function(RouteSettings settings)> route = {
           providers: [
             BlocProvider(
                 create: (_) => CreateNewProductBloc(
-                    container.get<SqlProductRepo>(), CreateProductForm.form())),
+                    container.get<SqlProductRepo>(),
+                    CreateProductForm.form(),
+                    container.get<ImagePicker>())),
             BlocProvider.value(value: value)
           ],
           child: const CreateNewProductScreen(),
@@ -141,7 +144,23 @@ final Map<String, Route Function(RouteSettings settings)> route = {
         settings);
   },
   RouteNames.setProductPriceScreen: (settings) {
-    return _route(const SetProductPriceScreen(), settings);
+    final bloc = settings.arguments;
+    if (bloc is! CreateNewProductBloc) {
+      return _route(ErrorWidget("CreateNewProductBloc not found"), settings);
+    }
+    return _route(
+        BlocProvider.value(value: bloc, child: const SetProductPriceScreen()),
+        settings);
+  },
+  RouteNames.setProductInventory: (settings) {
+    final bloc = settings.arguments;
+    if (bloc is! CreateNewProductBloc) {
+      return _route(ErrorWidget("CreateNewProductBloc not found"), settings);
+    }
+    return _route(
+        BlocProvider.value(
+            value: bloc, child: const SetProductInventoryScreen()),
+        settings);
   }
 };
 Route router(RouteSettings settings) {

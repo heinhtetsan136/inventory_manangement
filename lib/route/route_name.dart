@@ -6,5 +6,6 @@ class RouteNames {
       createNewProduct = "/createNewProduct",
       createNewCategory = "/createNewCategory",
       addCategoryScreen = "/add/Category",
-      setProductPriceScreen = "/add/ProductPrice";
+      setProductPriceScreen = "/add/ProductPrice",
+      setProductInventory = "/add/ProductInventory";
 }

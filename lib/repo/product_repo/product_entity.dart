@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:inventory_management_app/core/db/interface/crud_model.dart';
 import 'package:inventory_management_app/repo/category_repo/category_entity.dart';
+import 'package:inventory_management_app/repo/variant_repo/variant_entity.dart';
 
 class Product extends DatabaseModel {
   Product({
@@ -13,6 +14,7 @@ class Product extends DatabaseModel {
     required this.created_at,
     required this.updated_at,
     required this.description,
+    required this.variants,
   });
 
   factory Product.fromJson(dynamic data) {
@@ -40,6 +42,7 @@ class Product extends DatabaseModel {
         barcode: data["barcode"],
         created_at: DateTime.parse(data["created_at"].toString()),
         description: data["description"],
+        variants: [],
         updated_at: DateTime.tryParse(data["updated_at"] ?? ""));
   }
 
@@ -50,7 +53,7 @@ class Product extends DatabaseModel {
   final String description;
   final String name;
   final DateTime? updated_at;
-
+  final List<Variant> variants;
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -62,6 +65,7 @@ class Product extends DatabaseModel {
       "created_at": created_at.toIso8601String(),
       "updated_at": updated_at?.toIso8601String(),
       "description": description,
+      "variants": variants.map((e) => e.toJson()).toList(),
     };
   }
 

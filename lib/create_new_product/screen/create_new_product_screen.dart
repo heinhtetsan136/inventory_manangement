@@ -6,6 +6,7 @@ import 'package:inventory_management_app/core/bloc/sql_create_state.dart';
 import 'package:inventory_management_app/create_new_product/controller/create_new_product_bloc.dart';
 import 'package:inventory_management_app/logger/logger.dart';
 import 'package:inventory_management_app/route/route_name.dart';
+import 'package:inventory_management_app/theme/theme.dart';
 import 'package:inventory_management_app/widget/box/form_box.dart';
 import 'package:inventory_management_app/widget/button/bloc_outlinded_button.dart';
 import 'package:starlight_utils/starlight_utils.dart';
@@ -15,7 +16,10 @@ class CreateNewProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleTextStyle = context.theme.appBarTheme.titleTextStyle;
+    final bodyLargeTextStyle = StandardTheme.getBodyTextStyle(context);
     final categoryListBloc = context.read<CategoryListBloc>();
+    final createNewProductBloc = context.read<CreateNewProductBloc>();
     return Theme(
       data: context.theme.copyWith(
           listTileTheme: context.theme.listTileTheme.copyWith(
@@ -51,8 +55,9 @@ class CreateNewProductScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Product Photo"),
+                    Text("Product Photo", style: titleTextStyle),
                     Container(
+                      margin: const EdgeInsets.only(top: 12, bottom: 20),
                       width: 80,
                       height: 80,
                       // child:Icon(Icons.)
@@ -66,22 +71,30 @@ class CreateNewProductScreen extends StatelessWidget {
                         size: 30,
                       ),
                     ),
-                    const Text("Product Title"),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: "Shoes etc...",
+                    Text("Product Title", style: titleTextStyle),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, bottom: 20),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          hintText: "Shoes etc...",
+                        ),
                       ),
                     ),
-                    const Text("Description"),
-                    TextFormField(
-                      maxLines: 5,
-                      minLines: 3,
-                      decoration: const InputDecoration(
-                        hintText: "Enter a descriptions ...",
+                    Text("Description", style: titleTextStyle),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: TextFormField(
+                        maxLines: 5,
+                        minLines: 3,
+                        decoration: const InputDecoration(
+                          hintText: "Enter a descriptions ...",
+                        ),
                       ),
                     ),
-                    const Text(
-                        "Describe your product attributes,sales etc ... ")
+                    Text(
+                      "Describe your product attributes,sales etc ... ",
+                      style: bodyLargeTextStyle,
+                    )
                   ],
                 )),
             ListTile(
@@ -131,17 +144,28 @@ class CreateNewProductScreen extends StatelessWidget {
                       leading: const Icon(Icons.inventory_outlined),
                       title: const Text("Inventory"),
                       trailing: TextButton(
-                          onPressed: () {}, child: const Text("Edit")),
+                          onPressed: () {
+                            StarlightUtils.pushNamed(
+                                RouteNames.setProductInventory,
+                                arguments: createNewProductBloc);
+                          },
+                          child: const Text("Edit")),
                     ),
-                    const KeyValuePairWidget(
-                        leading: Text("SKU"),
-                        trailing: Text(
+                    KeyValuePairWidget(
+                        leading: Text(
+                          "SKU",
+                          style: bodyLargeTextStyle,
+                        ),
+                        trailing: const Text(
                           "data",
                           textAlign: TextAlign.end,
                         )),
-                    const KeyValuePairWidget(
-                        leading: Text("Barcode"),
-                        trailing: Text(
+                    KeyValuePairWidget(
+                        leading: Text(
+                          "Barcode",
+                          style: bodyLargeTextStyle,
+                        ),
+                        trailing: const Text(
                           "data",
                           textAlign: TextAlign.end,
                         )),
@@ -165,7 +189,8 @@ class CreateNewProductScreen extends StatelessWidget {
             ListTile(
               onTap: () async {
                 final price = await StarlightUtils.pushNamed(
-                    RouteNames.setProductPriceScreen);
+                    RouteNames.setProductPriceScreen,
+                    arguments: createNewProductBloc);
                 print("price $price");
               },
               leading: const Icon(
@@ -217,7 +242,10 @@ class StockValue extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("$value"),
+            Text(
+              "$value",
+              style: StandardTheme.getBodyTextStyle(context),
+            ),
             const Icon(Icons.arrow_drop_down_outlined),
           ],
         ),

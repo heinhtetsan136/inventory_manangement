@@ -56,7 +56,7 @@ class sqliteRepo<Model extends DatabaseModel,
 
   @override
   Future<Result<Model>> delete(int id) async {
-    final model = await _get(id);
+    final model = await get(id);
     final int effectedrow = await database
         .rawDelete("""delete from "$tableName" where id =?""", [id]);
     if (effectedrow < 1) {
@@ -86,7 +86,7 @@ class sqliteRepo<Model extends DatabaseModel,
           exception: ResultException("failed to update", StackTrace.current));
     }
     print("result $effectedrow");
-    final model = await _get(id);
+    final model = await get(id);
     _streamController.sink.add(DatabaseCrudOnchange.DatabaseCrudOnActions(
         model: model, operations: DatabaseCrudUpdateOperations()));
     return model;
@@ -97,7 +97,7 @@ class sqliteRepo<Model extends DatabaseModel,
   Database get database => store.database!;
 
   @override
-  Future<Result<Model>> _get(int id) async {
+  Future<Result<Model>> get(int id) async {
     final result = await database
         .rawQuery(""" select * from "$tableName" where id=$id limit 1;""");
     if (result.isEmpty) {
@@ -135,7 +135,7 @@ class sqliteRepo<Model extends DatabaseModel,
 
   Future<Result<Model>> getOne(int id, [bool useRef = false]) {
     this.useRef = useRef;
-    return _completer(_get(id), useRef);
+    return _completer(get(id), useRef);
   }
 
   Future<Result> _completer<Result>(Future<Result> callback, bool useRef) {
